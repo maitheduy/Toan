@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Giảng: So Sánh Phân Số</title>
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #ffc107;
+            --accent-color: #28a745;
+            --light-blue: #e9f5ff;
+            --light-yellow: #fffbe6;
+            --light-gray: #f4f4f4;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: var(--light-gray);
+            margin: 0;
+            padding: 20px;
+            background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--secondary-color));
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .example {
+            background-color: var(--light-blue);
+            border-left: 5px solid var(--primary-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .example:hover {
+            transform: scale(1.01);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .rule {
+            background-color: var(--light-yellow);
+            border-left: 5px solid var(--secondary-color);
+            padding: 15px;
+            margin: 20px 0;
+            font-weight: bold;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        .rule::before {
+            content: "💡";
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+        }
+        
+        .fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 1.2em;
+            margin: 0 5px;
+        }
+        
+        .fraction > sup, .fraction > sub {
+            display: block;
+            line-height: 1.1;
+        }
+        
+        .fraction > sup {
+            border-bottom: 1px solid #000;
+            padding: 0 5px;
+        }
+        
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        img:hover {
+            transform: scale(1.02);
+        }
+        
+        .conclusion {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--accent-color);
+            padding: 10px;
+            border-radius: 5px;
+            background-color: rgba(40, 167, 69, 0.1);
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        /* CSS dành cho lời thuyết minh của thầy giáo */
+        .audio-script {
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+            margin-top: 15px;
+            padding: 15px;
+            border-left: 3px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        .audio-script::before {
+            content: "🎤";
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            padding: 5px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .audio-script strong {
+            color: #444;
+        }
+        
+        /* Navigation */
+        .nav-container {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            z-index: 100;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .nav-link {
+            padding: 8px 15px;
+            background: var(--light-blue);
+            border-radius: 20px;
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .nav-link:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Interactive elements */
+        .interactive-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .interactive-btn:hover {
+            background: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .hidden-content {
+            display: none;
+            padding: 15px;
+            margin-top: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        /* Trục số */
+        .number-line-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .number-line-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .number-line-controls input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 60px;
+            text-align: center;
+        }
+        
+        #numberLineCanvas {
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* Audio player styles */
+        .audio-player {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f0f8ff;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .audio-player iframe {
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .audio-player a {
+            display: inline-block;
+            margin-top: 5px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        
+        .audio-player a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-link {
+                width: 90%;
+                text-align: center;
+            }
+            
+            .number-line-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .audio-player iframe {
+                width: 100%;
+            }
+        }
+        
+        /* Animation for sections */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Bài Giảng: Các Phương Pháp So Sánh Phân Số</h1>
+        
+        <div class="nav-container">
+            <div class="nav-links">
+                <a href="#part1" class="nav-link">Phần 1: Trục số</a>
+                <a href="#part2" class="nav-link">Phần 2: Trường hợp đặc biệt</a>
+                <a href="#part3" class="nav-link">Phần 3: Nhân chéo</a>
+                <a href="#part4" class="nav-link">Phần 4: Luyện tập</a>
+                <a href="#summary" class="nav-link">Tổng kết</a>
+            </div>
+        </div>
+
+        <div class="audio-script">
+            <p><strong>[Nhạc nền nhẹ nhàng, vui tươi rồi nhỏ dần]</strong> Chào con, hôm nay bố/thầy sẽ dạy con về cách so sánh các phân số một cách dễ hiểu nhất nhé.</p>
+            
+            <div class="audio-player">
+                <iframe width="300" height="60" src="https://vocaroo.com/embed/1cANwIVAUdEb?autoplay=0" frameborder="0" allow="autoplay"></iframe>
+                <br>
+                <a href="https://voca.ro/1cANwIVAUdEb" title="Vocaroo Voice Recorder" target="_blank">View on Vocaroo &gt;&gt;</a>
+            </div>
+        </div>
+
+        <div class="section" id="part1">
+            <h2>Phần 1: Nhắc lại về so sánh số nguyên trên trục số</h2>
+
+            <div class="audio-script">
+                <p>Trước hết, chúng ta hãy cùng nhau ôn lại một kiến thức cũ mà rất quan trọng. Đó là so sánh các số nguyên trên trục số. Con hãy nhìn vào hình ảnh trên màn hình. Trục số là một đường thẳng, có số 0 ở giữa. Các số dương như 1, 2, 3 thì nằm bên phải, còn các số âm như -1, -2 thì nằm bên trái.</p>
+                
+                <div class="audio-player">
+                    <iframe width="300" height="60" src="https://vocaroo.com/embed/1kpi5UUiNJyi?autoplay=0" frameborder="0" allow="autoplay"></iframe>
+                    <br>
+                    <a href="https://voca.ro/1kpi5UUiNJyi" title="Vocaroo Voice Recorder" target="_blank">View on Vocaroo &gt;&gt;</a>
+                </div>
+                
+                <p><strong>[Ngừng một chút]</strong> Quy tắc vàng ở đây là: số nào nằm <strong>bên phải</strong> thì sẽ <strong>lớn hơn</strong>. Rất đơn giản! Ví dụ, 2 ở bên phải 1, nên 2 lớn hơn 1. Nhưng với số âm thì sao? Con hãy nhìn kỹ nhé, -1 lại nằm ở bên phải của -2, nên -1 lớn hơn -2. Điều này có vẻ hơi ngược một chút, nhưng nếu con cứ nhớ quy tắc "bên phải lớn hơn" thì sẽ không bao giờ nhầm lẫn.</p>
+                
+                <div class="audio-player">
+                    <iframe width="300" height="60" src="https://vocaroo.com/embed/167DhtY0hBze?autoplay=0" frameborder="0" allow="autoplay"></iframe>
+                    <br>
+                    <a href="https://voca.ro/167DhtY0hBze" title="Vocaroo Voice Recorder" target="_blank">View on Vocaroo &gt;&gt;</a>
+                </div>
+            </div>
+
+            <p>Trước khi so sánh phân số, chúng ta hãy cùng ôn lại cách so sánh các số nguyên trên một công cụ rất trực quan là "trục số".</p>
+            <p>Quy tắc vàng: Trên trục số, số nào nằm <strong>bên phải</strong> thì <strong>lớn hơn</strong> số nằm bên trái.</p>
+            
+            <!-- Trục số tương tác -->
+            <div class="number-line-container">
+                <h3>Trục số tương tác</h3>
+                <p>Nhập các số nguyên để so sánh trên trục số:</p>
+                
+                <div class="number-line-controls">
+                    <div>
+                        <label for="number1">Số thứ nhất:</label>
+                        <input type="number" id="number1" value="-2" min="-10" max="10">
+                    </div>
+                    <div>
+                        <label for="number2">Số thứ hai:</label>
+                        <input type="number" id="number2" value="3" min="-10" max="10">
+                    </div>
+                    <button class="interactive-btn" id="compareNumbers">So sánh</button>
+                </div>
+                
+                <canvas id="numberLineCanvas" width="800" height="150"></canvas>
+                
+                <div id="comparisonResult" style="text-align: center; margin-top: 15px; font-weight: bold;"></div>
+            </div>
+            
+            <div class="example">
+                <p><strong>Ví dụ 1 (Số dương):</strong> Số 2 nằm bên phải số 1, vì vậy <code>2 > 1</code>.</p>
+                <p><strong>Ví dụ 2 (Số âm):</strong> Số -1 nằm bên phải số -2. Vì vậy, <code>-1 > -2</code>. Tương tự, <code>-1 > -100</code>.</p>
+            </div>
+            
+            <button class="interactive-btn" onclick="toggleContent('trc-so-baitap')">Xem bài tập thêm</button>
+            <div id="trc-so-baitap" class="hidden-content">
+                <p><strong>Bài tập thực hành:</strong> Hãy so sánh các cặp số sau dựa trên trục số:</p>
+                <ul>
+                    <li>5 và 3</li>
+                    <li>-4 và -7</li>
+                    <li>0 và -2</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section" id="part2">
+            <h2>Phần 2: Các trường hợp so sánh phân số đặc biệt</h2>
+
+            <div class="audio-script">
+                 <p>Bây giờ, chúng ta sẽ vào phần chính của bài học: so sánh phân số.</p>
+            </div>
+            
+            <h3>Trường hợp 1: Hai phân số có cùng tử số</h3>
+            <div class="audio-script">
+                <p>Trường hợp đầu tiên, khi hai phân số có cùng tử số. Ví dụ, so sánh 1/3 và 1/5. Con hãy tưởng tượng nhé... Con có 1 cái kẹo, nếu con chia cho 3 bạn, so với việc cũng 1 cái kẹo đó mà chia cho 5 bạn, thì trường hợp nào mỗi bạn sẽ được nhiều kẹo hơn?</p>
+                <p><strong>[Dừng lại cho học sinh suy nghĩ]</strong> Đúng rồi! Chia cho 3 bạn thì phần kẹo của mỗi bạn sẽ lớn hơn. Vì vậy, 1/3 lớn hơn 1/5. Quy tắc của chúng ta là: <strong>Cùng tử số, mẫu số nhỏ hơn thì phân số lớn hơn.</strong></p>
+            </div>
+            <div class="example">
+                <p><strong>Bài toán:</strong> So sánh <span class="fraction"><sup>1</sup><sub>3</sub></span> và <span class="fraction"><sup>1</sup><sub>5</sub></span>.</p>
+                <p><strong>Tư duy trực quan:</strong> Tưởng tượng con có 1 cái kẹo. Nếu chia cho 3 người thì mỗi người sẽ được nhiều kẹo hơn là khi chia cho 5 người.</p>
+                <p class="conclusion">Kết luận: <span class="fraction"><sup>1</sup><sub>3</sub></span> > <span class="fraction"><sup>1</sup><sub>5</sub></span></p>
+            </div>
+            <div class="rule">
+                Quy tắc: Khi hai phân số có cùng tử số, phân số nào có <strong>mẫu số nhỏ hơn</strong> thì phân số đó <strong>lớn hơn</strong>.
+            </div>
+
+            <h3>Trường hợp 2: Hai phân số có cùng mẫu số</h3>
+            <div class="audio-script">
+                <p>Tiếp theo, nếu hai phân số có cùng mẫu số thì sao? Ví dụ so sánh 3/5 và 2/5. Lại là ví dụ cái kẹo nhé! Cùng chia cho 5 người, một bên có 3 cái kẹo, một bên có 2 cái kẹo. Rõ ràng là bên có 3 cái kẹo thì mỗi người sẽ được nhiều hơn, phải không nào? Do đó, 3/5 lớn hơn 2/5. Quy tắc ở đây là: <strong>Cùng mẫu số, tử số lớn hơn thì phân số lớn hơn.</strong></p>
+            </div>
+            <div class="example">
+                <p><strong>Bài toán:</strong> So sánh <span class="fraction"><sup>3</sup><sub>5</sub></span> và <span class="fraction"><sup>2</sup><sub>5</sub></span>.</p>
+                <p><strong>Tư duy trực quan:</strong> Cùng chia cho 5 người, bên nào có 3 cái kẹo để chia thì chắc chắn mỗi người sẽ được nhiều hơn bên chỉ có 2 cái kẹo.</p>
+                <p class="conclusion">Kết luận: <span class="fraction"><sup>3</sup><sub>5</sub></span> > <span class="fraction"><sup>2</sup><sub>5</sub></span></p>
+            </div>
+            <div class="rule">
+                Quy tắc: Khi hai phân số có cùng mẫu số, phân số nào có <strong>tử số lớn hơn</strong> thì phân số đó <strong>lớn hơn</strong>.
+            </div>
+            
+            <button class="interactive-btn" onclick="toggleContent('truong-hop-baitap')">Xem bài tập thêm</button>
+            <div id="truong-hop-baitap" class="hidden-content">
+                <p><strong>Bài tập thực hành:</strong> Hãy so sánh các cặp phân số sau:</p>
+                <ul>
+                    <li><span class="fraction"><sup>3</sup><sub>7</sub></span> và <span class="fraction"><sup>3</sup><sub>9</sub></span></li>
+                    <li><span class="fraction"><sup>5</sup><sub>8</sub></span> và <span class="fraction"><sup>7</sup><sub>8</sub></span></li>
+                    <li><span class="fraction"><sup>2</sup><sub>11</sub></span> và <span class="fraction"><sup>2</sup><sub>15</sub></span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section" id="part3">
+            <h2>Phần 3: Phương pháp "Nhân chéo" - Áp dụng cho mọi trường hợp</h2>
+            <div class="audio-script">
+                <p>Hai trường hợp vừa rồi khá đơn giản. Nhưng nếu hai phân số không cùng tử cũng không cùng mẫu thì sao? Đừng lo, chúng ta có một "tuyệt chiêu" cực kỳ hiệu quả, đó là phương pháp <strong>"nhân chéo"</strong>.</p>
+                <p><strong>[Chỉ vào ví dụ 2/5 và 3/7]</strong> Con hãy nhìn vào ví dụ này. Để so sánh 2/5 và 3/7, con chỉ cần làm như sau: 1. Lấy tử số của phân số thứ nhất nhân với mẫu số của phân số thứ hai: 2 nhân 7 bằng 14. 2. Lấy mẫu số của phân số thứ nhất nhân với tử số của phân số thứ hai: 5 nhân 3 bằng 15. Bây giờ ta chỉ cần so sánh hai kết quả này. Vì 14 nhỏ hơn 15, nên phân số ban đầu 2/5 sẽ nhỏ hơn 3/7. Rất nhanh và chính xác!</p>
+            </div>
+            <p>Đây là một "tuyệt chiêu" rất nhanh và chính xác, có thể dùng để so sánh bất kỳ hai phân số nào.</p>
+            <img src="https://storage.googleapis.com/rest-dev/1722305528859_2024-07-30_02-12-07.png" alt="Ví dụ nhân chéo">
+            <div class="rule">
+                Quy tắc: Để so sánh <span class="fraction"><sup>a</sup><sub>b</sub></span> và <span class="fraction"><sup>c</sup><sub>d</sub></span>, ta so sánh hai tích chéo: <strong>a × d</strong> và <strong>b × c</strong>.
+                <ul>
+                    <li>Nếu a × d > b × c thì <span class="fraction"><sup>a</sup><sub>b</sub></span> > <span class="fraction"><sup>c</sup><sub>d</sub></span></li>
+                    <li>Nếu a × d < b × c thì <span class="fraction"><sup>a</sup><sub>b</sub></span> < <span class="fraction"><sup>c</sup><sub>d</sub></span></li>
+                </ul>
+            </div>
+            <div class="example">
+                <p><strong>Ví dụ 1: So sánh <span class="fraction"><sup>2</sup><sub>5</sub></span> và <span class="fraction"><sup>3</sup><sub>7</sub></span></strong></p>
+                <p>Ta có: 2 × 7 = 14 và 5 × 3 = 15. <br> Vì 14 < 15 nên <span class="conclusion"><span class="fraction"><sup>2</sup><sub>5</sub></span> < <span class="fraction"><sup>3</sup><sub>7</sub></span></span>.</p>
+                <p><strong>Ví dụ 2: So sánh <span class="fraction"><sup>4</sup><sub>3</sub></span> và <span class="fraction"><sup>1</sup><sub>6</sub></span></strong></p>
+                <p>Ta có: 4 × 6 = 24 và 3 × 1 = 3. <br> Vì 24 > 3 nên <span class="conclusion"><span class="fraction"><sup>4</sup><sub>3</sub></span> > <span class="fraction"><sup>1</sup><sub>6</sub></span></span>.</p>
+            </div>
+            
+            <button class="interactive-btn" onclick="toggleContent('nhan-cheo-baitap')">Xem bài tập thêm</button>
+            <div id="nhan-cheo-baitap" class="hidden-content">
+                <p><strong>Bài tập thực hành:</strong> Hãy so sánh các cặp phân số sau bằng phương pháp nhân chéo:</p>
+                <ul>
+                    <li><span class="fraction"><sup>3</sup><sub>4</sub></span> và <span class="fraction"><sup>5</sup><sub>7</sub></span></li>
+                    <li><span class="fraction"><sup>7</sup><sub>9</sub></span> và <span class="fraction"><sup>8</sup><sub>11</sub></span></li>
+                    <li><span class="fraction"><sup>2</sup><sub>5</sub></span> và <span class="fraction"><sup>3</sup><sub>8</sub></span></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section" id="part4">
+            <h2>Phần 4: Luyện tập với các bài toán phức tạp hơn</h2>
+            <div class="audio-script">
+                <p>Bây giờ, hãy cùng áp dụng những gì đã học để giải một vài bài toán trông có vẻ phức tạp hơn nhé.</p>
+            </div>
+            <img src="https://storage.googleapis.com/rest-dev/1722305545532_2024-07-30_02-12-24.png" alt="Các bài toán luyện tập">
+            
+            <div class="audio-script">
+                <p><strong>[Chỉ vào Bài 1]</strong> Bài 1: So sánh -125/2021 và -152/2021. À, hai phân số này có cùng mẫu số rồi! Ta chỉ cần so sánh hai tử số là -125 và -152. Dựa vào trục số ta biết -125 lớn hơn -152. Vậy kết quả là -125/2021 lớn hơn -152/2021. Đừng để những con số to làm mình hoảng sợ nhé!</p>
+            </div>
+            <div class="example">
+                <p><strong>Bài 1: So sánh <span class="fraction"><sup>-125</sup><sub>2021</sub></span> và <span class="fraction"><sup>-152</sup><sub>2021</sub></span></strong></p>
+                <p>Phân tích: Cùng mẫu số, ta so sánh tử số -125 và -152. Vì -125 > -152.</p>
+                <p class="conclusion">Kết luận: <span class="fraction"><sup>-125</sup><sub>2021</sub></span> > <span class="fraction"><sup>-152</sup><sub>2021</sub></span></p>
+            </div>
+
+            <div class="audio-script">
+                <p><strong>[Chỉ vào Bài 2]</strong> Bài 2: So sánh 11/-42 và -4/15. Bài này ta sẽ dùng nhân chéo. Lấy 11 nhân 15 được 165. Lấy -42 nhân -4, à, âm nhân âm ra dương nhé, ta được 168. Vì 165 nhỏ hơn 168, nên phân số ban đầu sẽ nhỏ hơn.</p>
+            </div>
+            <div class="example">
+                <p><strong>Bài 2: So sánh <span class="fraction"><sup>11</sup><sub>-42</sub></span> và <span class="fraction"><sup>-4</sup><sub>15</sub></span></strong></p>
+                <p>Phân tích: Dùng phương pháp nhân chéo. <br> Tích 1: 11 × 15 = 165 <br> Tích 2: (-42) × (-4) = 168 <br> Vì 165 < 168.</p>
+                <p class="conclusion">Kết luận: <span class="fraction"><sup>11</sup><sub>-42</sub></span> < <span class="fraction"><sup>-4</sup><sub>15</sub></span></p>
+            </div>
+            
+            <div class="audio-script">
+                <p><strong>[Chỉ vào Bài 3]</strong> Bài cuối cùng, so sánh 109/-36 và -3. Ta sẽ viết lại -3 thành phân số -3/1 rồi nhân chéo như bình thường. Ta có 109 nhân 1 bằng 109, và -36 nhân -3 bằng 108. Vì 109 lớn hơn 108 nên phân số ban đầu lớn hơn. Con thấy không, dù bài toán trông như thế nào, chúng ta đều có cách giải quyết.</p>
+            </div>
+            <div class="example">
+                <p><strong>Bài 3: So sánh <span class="fraction"><sup>109</sup><sub>-36</sub></span> và -3</strong></p>
+                <p>Phân tích: Viết -3 thành <span class="fraction"><sup>-3</sup><sub>1</sub></span> rồi nhân chéo. <br> Tích 1: 109 × 1 = 109 <br> Tích 2: (-36) × (-3) = 108 <br> Vì 109 > 108.</p>
+                <p class="conclusion">Kết luận: <span class="fraction"><sup>109</sup><sub>-36</sub></span> > -3</p>
+            </div>
+        </div>
+
+        <div class="section" id="summary">
+            <h2>Tổng kết</h2>
+            <div class="audio-script">
+                <p>Vậy là hôm nay chúng ta đã học được tất cả các phương pháp quan trọng để so sánh phân số. Con hãy nhớ nhé: so sánh khi cùng tử, so sánh khi cùng mẫu, và đặc biệt là phương pháp nhân chéo có thể áp dụng cho mọi trường hợp.</p>
+            </div>
+
+            <p>Vậy là con đã học được các cách chính để so sánh phân số:</p>
+            <ul>
+                <li><strong>Trường hợp cùng tử số:</strong> Mẫu nhỏ hơn thì phân số lớn hơn.</li>
+                <li><strong>Trường hợp cùng mẫu số:</strong> Tử lớn hơn thì phân số lớn hơn.</li>
+                <li><strong>Phương pháp nhân chéo:</strong> Cách tổng quát, nhanh và hiệu quả cho mọi bài toán.</li>
+            </ul>
+
+            <div class="audio-script">
+                <p><strong>[Nhạc vui tươi nổi lên]</strong> Bài học của chúng ta đến đây là kết thúc rồi. Con hãy xem lại và làm thêm bài tập để ghi nhớ kiến thức nhé. Chúc con học tốt!</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Bài giảng so sánh phân số - Học toán vui vẻ!</p>
+        </div>
+
+    </div>
+
+    <script>
+        // Function to toggle hidden content
+        function toggleContent(id) {
+            const content = document.getElementById(id);
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        }
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Add animation to sections when they come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all sections
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.opacity = 0;
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(section);
+        });
+        
+        // Vẽ trục số
+        const canvas = document.getElementById('numberLineCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Điều chỉnh kích thước canvas cho phù hợp với màn hình
+        function resizeCanvas() {
+            const containerWidth = canvas.parentElement.clientWidth;
+            canvas.width = Math.min(800, containerWidth - 40);
+            drawNumberLine();
+        }
+        
+        // Vẽ trục số với các số được chỉ định
+        function drawNumberLine(num1 = -2, num2 = 3) {
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerY = height / 2;
+            const scale = width / 20; // 20 đơn vị từ -10 đến 10
+            const originX = width / 2;
+            
+            // Xóa canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Vẽ đường trục số
+            ctx.beginPath();
+            ctx.moveTo(20, centerY);
+            ctx.lineTo(width - 20, centerY);
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Vẽ mũi tên
+            ctx.beginPath();
+            ctx.moveTo(width - 25, centerY - 5);
+            ctx.lineTo(width - 20, centerY);
+            ctx.lineTo(width - 25, centerY + 5);
+            ctx.fillStyle = '#333';
+            ctx.fill();
+            
+            // Vẽ các điểm và số trên trục
+            for (let i = -10; i <= 10; i++) {
+                const x = originX + (i * scale);
+                
+                // Vẽ điểm đánh dấu
+                ctx.beginPath();
+                ctx.arc(x, centerY, 3, 0, Math.PI * 2);
+                ctx.fillStyle = i === 0 ? '#e74c3c' : '#333';
+                ctx.fill();
+                
+                // Vẽ số
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillStyle = '#333';
+                ctx.fillText(i, x, centerY + 10);
+            }
+            
+            // Vẽ điểm số 1
+            const x1 = originX + (num1 * scale);
+            ctx.beginPath();
+            ctx.arc(x1, centerY, 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#3498db';
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(num1, x1, centerY);
+            
+            // Vẽ điểm số 2
+            const x2 = originX + (num2 * scale);
+            ctx.beginPath();
+            ctx.arc(x2, centerY, 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#e74c3c';
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(num2, x2, centerY);
+            
+            // So sánh và hiển thị kết quả
+            let resultText = '';
+            if (num1 > num2) {
+                resultText = `Kết quả: ${num1} > ${num2} (vì ${num1} nằm bên phải ${num2} trên trục số)`;
+            } else if (num1 < num2) {
+                resultText = `Kết quả: ${num1} < ${num2} (vì ${num1} nằm bên trái ${num2} trên trục số)`;
+            } else {
+                resultText = `Kết quả: ${num1} = ${num2}`;
+            }
+            
+            document.getElementById('comparisonResult').innerHTML = resultText;
+        }
+        
+        // Xử lý sự kiện khi nhấn nút so sánh
+        document.getElementById('compareNumbers').addEventListener('click', function() {
+            const num1 = parseInt(document.getElementById('number1').value);
+            const num2 = parseInt(document.getElementById('number2').value);
+            
+            // Kiểm tra giá trị hợp lệ
+            if (isNaN(num1) || isNaN(num2) || num1 < -10 || num1 > 10 || num2 < -10 || num2 > 10) {
+                alert('Vui lòng nhập số nguyên từ -10 đến 10');
+                return;
+            }
+            
+            drawNumberLine(num1, num2);
+        });
+        
+        // Xử lý sự kiện khi thay đổi kích thước cửa sổ
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Khởi tạo
+        window.addEventListener('load', function() {
+            resizeCanvas();
+            drawNumberLine();
+        });
+    </script>
+
+</body>
+</html>
