@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Game Hình học 7: Tam giác & Đường đặc biệt</title>
+  <style>
+    :root{
+      --bg:#0f172a; --panel:#111827ee; --card:#1f2937;
+      --muted:#facc15; --accent:#fde047; --text:#fff;
+      --good:#34d399; --bad:#fb7185;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+      background: radial-gradient(1200px 800px at 10% -10%, #facc1533, transparent),
+                  radial-gradient(1400px 1000px at 110% 10%, #fde04733, transparent),
+                  var(--bg); color:var(--text);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    header{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+    h1{margin:0;font-size:clamp(22px,3.2vw,34px);font-weight:800}
+    .badge{padding:6px 10px;border:1px solid var(--muted);border-radius:999px;color:var(--muted);font-size:12px}
+    .panel{background:var(--panel);backdrop-filter: blur(10px);border:1px solid #374151;border-radius:20px;padding:16px}
+
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .tab{padding:10px 14px;border:1px solid var(--muted);background:#0b1220; color:var(--text);border-radius:12px;cursor:pointer;font-weight:600}
+    .tab[aria-selected="true"]{border-color:var(--accent); color:var(--accent); box-shadow:0 0 0 2px #fde04755 inset}
+    .pill{padding:6px 10px;border:1px solid var(--muted);border-radius:10px;color:var(--accent)}
+    .btn{padding:10px 14px;border:1px solid var(--muted);border-radius:12px;background:#0b1220;color:var(--text);font-weight:700;cursor:pointer}
+    .btn:hover{border-color:var(--accent)}
+
+    .screen{display:none}
+    .screen.active{display:block}
+    .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .big{font-size:clamp(20px,2.5vw,28px);font-weight:800;color:#fde68a}
+
+    .choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:12px}
+    .choice{padding:12px;border:1px solid var(--muted);border-radius:12px;background:#0b1220;cursor:pointer;color:var(--text)}
+    .choice.correct{border-color:#34d399; box-shadow:0 0 0 2px #34d39944 inset; color:#bbf7d0}
+    .choice.wrong{border-color:#fb7185; box-shadow:0 0 0 2px #fb718544 inset; color:#fecaca}
+
+    svg{width:100%;height:auto;max-height:420px;background:#0b1220;border-radius:16px;border:1px solid #334155}
+    .A{fill:#60a5fa}.B{fill:#f87171}.C{fill:#22d3ee}
+    .lab{font:600 14px/1 system-ui, sans-serif; fill:#fff}
+    .tri{stroke:#94a3b8; stroke-width:2; fill:transparent}
+    .hl{stroke:#fde047; stroke-width:2.5;}
+    .dot{r:5}
+
+    .footer{margin-top:18px;color:var(--muted);font-size:12px}
+    .kbd{border:1px solid var(--muted);border-bottom-width:3px;padding:2px 6px;border-radius:6px;background:#0b1220;font-weight:700;color:var(--text)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Game Hình học 7: Tam giác & Đường đặc biệt</h1>
+      <span class="badge">v1.1</span>
+    </header>
+
+    <div class="panel">
+      <div class="toolbar">
+        <div class="tabs" role="tablist" aria-label="Chế độ chơi">
+          <button class="tab" data-tab="idline" aria-selected="true">Nhận diện đường đặc biệt</button>
+          <button class="tab" data-tab="centers">Nhận diện tâm tam giác</button>
+        </div>
+        <span class="pill">⏱️ Thời gian: <span id="time" class="num">60</span>s</span>
+        <span class="pill">⭐ Điểm: <span id="score" class="num">0</span></span>
+        <span class="pill">🔥 Liên tiếp: <span id="streak" class="num">0</span></span>
+        <button id="newGame" class="btn">Bắt đầu lại</button>
+      </div>
+
+      <!-- Screen 1: Identify special lines -->
+      <section id="screen-idline" class="screen active">
+        <div class="row"><div class="big" id="q1">Đây là đường gì trong tam giác?</div></div>
+        <svg id="svg1" viewBox="0 0 600 420"></svg>
+        <div class="choices" id="choices1"></div>
+      </section>
+
+      <!-- Screen 2: Identify triangle centers -->
+      <section id="screen-centers" class="screen">
+        <div class="row"><div class="big" id="q2">Dấu ⊙ thể hiện tâm nào của tam giác?</div></div>
+        <svg id="svg2" viewBox="0 0 600 420"></svg>
+        <div class="choices" id="choices2"></div>
+      </section>
+
+      <div class="footer">Mẹo: Dùng phím <span class="kbd">1</span>–<span class="kbd">4</span> để chọn nhanh, <span class="kbd">R</span> để bắt đầu lại.</div>
+    </div>
+  </div>
+
+  <div id="toast" style="position:fixed;left:50%;transform:translateX(-50%);bottom:28px;background:#0b1220;border:1px solid var(--muted);border-radius:12px;padding:10px 14px;display:none;color:#fff">Đúng rồi! ✨</div>
+
+  <script>
+  // Helpers
+  const $ = (s,el=document)=>el.querySelector(s); const $$=(s,el=document)=>Array.from(el.querySelectorAll(s));
+  const shuffle = arr => arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+  const lerp=(a,b,t)=>({x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t});
+  function dist(a,b){const dx=a.x-b.x, dy=a.y-b.y; return Math.hypot(dx,dy)}
+  function unit(a,b){const d=dist(a,b); return {x:(b.x-a.x)/d, y:(b.y-a.y)/d}}
+  function lineIntersect(p1,p2,p3,p4){
+    const x1=p1.x,y1=p1.y,x2=p2.x,y2=p2.y,x3=p3.x,y3=p3.y,x4=p4.x,y4=p4.y;
+    const den=(x1-x2)*(y3-y4)-(y1-y2)*(x3-x4);
+    if(Math.abs(den)<1e-6) return null;
+    const px=((x1*y2 - y1*x2)*(x3 - x4) - (x1 - x2)*(x3*y4 - y3*x4))/den;
+    const py=((x1*y2 - y1*x2)*(y3 - y4) - (y1 - y2)*(x3*y4 - y3*x4))/den;
+    return {x:px,y:py};
+  }
+  function footOfPerp(A,B,C){
+    const bx=B.x, by=B.y, cx=C.x, cy=C.y, ax=A.x, ay=A.y;
+    const vx=cx-bx, vy=cy-by;
+    const t=((ax-bx)*vx+(ay-by)*vy)/(vx*vx+vy*vy);
+    return {x:bx+t*vx, y:by+t*vy};
+  }
+
+  // State
+  let mode='idline', score=0, streak=0, timeLeft=60, timer=null;
+  let currentAnswerMap = [];
+
+  function init(){
+    bindUI(); newGame();
+  }
+  function bindUI(){
+    $$('.tab').forEach(btn=>btn.addEventListener('click',()=>{
+      $$('.tab').forEach(b=>b.setAttribute('aria-selected','false'));
+      btn.setAttribute('aria-selected','true'); mode=btn.dataset.tab;
+      $$('.screen').forEach(s=>s.classList.remove('active')); $('#screen-'+mode).classList.add('active');
+      nextQ();
+    }));
+    $('#newGame').addEventListener('click', newGame);
+    window.addEventListener('keydown',(e)=>{
+      if(['1','2','3','4'].includes(e.key)) pick(+e.key-1);
+      else if(e.key.toLowerCase()==='r') newGame();
+    });
+  }
+  function newGame(){
+    score=0; streak=0; timeLeft=60; updateHUD();
+    if(timer) clearInterval(timer);
+    timer=setInterval(()=>{ timeLeft--; updateHUD(); if(timeLeft<=0){clearInterval(timer); over();} },1000);
+    nextQ(); toast('Bắt đầu! Chúc may mắn ✨');
+  }
+  function updateHUD(){ $('#score').textContent=score; $('#streak').textContent=streak; $('#time').textContent=Math.max(0,timeLeft); }
+  function over(){ toast(`Hết giờ! Điểm: ${score}`); }
+  function toast(msg){ const t=$('#toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2100); }
+
+  function randTri(){
+    const W=560, H=360, pad=30;
+    const pts = [
+      {x:pad+Math.random()*(W-2*pad), y:pad+Math.random()*(H-2*pad)},
+      {x:pad+Math.random()*(W-2*pad), y:pad+Math.random()*(H-2*pad)},
+      {x:pad+Math.random()*(W-2*pad), y:pad+Math.random()*(H-2*pad)}
+    ];
+    const area=Math.abs((pts[1].x-pts[0].x)*(pts[2].y-pts[0].y)-(pts[1].y-pts[0].y)*(pts[2].x-pts[0].x))/2;
+    if(area<2000) return randTri();
+    return {A:pts[0],B:pts[1],C:pts[2]};
+  }
+
+  function drawTri(svg, T){
+    svg.innerHTML='';
+    const p = (P)=>`${P.x},${P.y}`;
+    const tri = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+    tri.setAttribute('points', `${p(T.A)} ${p(T.B)} ${p(T.C)} ${p(T.A)}`);
+    tri.setAttribute('class','tri'); svg.appendChild(tri);
+    [['A',T.A,'A'],['B',T.B,'B'],['C',T.C,'C']].forEach(([cls,P,txt])=>{
+      const c=document.createElementNS('http://www.w3.org/2000/svg','circle'); c.setAttribute('cx',P.x); c.setAttribute('cy',P.y); c.setAttribute('r',5); c.setAttribute('class','dot'); c.classList.add(cls);
+      const t=document.createElementNS('http://www.w3.org/2000/svg','text'); t.setAttribute('x',P.x+8); t.setAttribute('y',P.y-8); t.setAttribute('class','lab'); t.textContent=txt;
+      svg.appendChild(c); svg.appendChild(t);
+    })
+  }
+
+  function drawLine(svg, P1, P2, cls='hl'){
+    const minX=0, maxX=600, minY=0, maxY=420;
+    const v={x:P2.x-P1.x,y:P2.y-P1.y}; if(Math.hypot(v.x,v.y)<1e-6) return;
+    function at(t){return {x:P1.x+v.x*t, y:P1.y+v.y*t}}
+    const ts=[];
+    if(Math.abs(v.x)>1e-6){ ts.push((minX-P1.x)/v.x); ts.push((maxX-P1.x)/v.x); }
+    if(Math.abs(v.y)>1e-6){ ts.push((minY-P1.y)/v.y); ts.push((maxY-P1.y)/v.y); }
+    const xs=ts.map(at).filter(p=>p.x>=minX-1&&p.x<=maxX+1&&p.y>=minY-1&&p.y<=maxY+1).sort((a,b)=>a.x-b.x||a.y-b.y);
+    const L=document.createElementNS('http://www.w3.org/2000/svg','line');
+    const a=xs[0]||P1, b=xs[xs.length-1]||P2; L.setAttribute('x1',a.x); L.setAttribute('y1',a.y); L.setAttribute('x2',b.x); L.setAttribute('y2',b.y); L.setAttribute('class',cls);
+    svg.appendChild(L); return L;
+  }
+
+  // --- Mode 1: identify special line ---
+  const LINE_NAMES=[
+    {key:'alt', vi:'Đường cao'},
+    {key:'med', vi:'Trung tuyến'},
+    {key:'bis', vi:'Phân giác'},
+    {key:'pbis', vi:'Trung trực'}
+  ];
+  let correctKey=null;
+
+  function buildLineQ(){
+    const svg=$('#svg1'); const T=randTri(); drawTri(svg,T);
+    const pick=shuffle(LINE_NAMES)[0]; correctKey=pick.key;
+    if(pick.key==='alt'){
+      const F=footOfPerp(T.A,T.B,T.C); drawLine(svg,T.A,F);
+    } else if(pick.key==='med'){
+      const M=lerp(T.B,T.C,0.5); drawLine(svg,T.A,M);
+    } else if(pick.key==='bis'){
+      const u=unit(T.A,T.B), v=unit(T.A,T.C); const dir={x:u.x+v.x, y:u.y+v.y};
+      const P_far={x:T.A.x+dir.x*500, y:T.A.y+dir.y*500}; drawLine(svg,T.A,P_far);
+    } else if(pick.key==='pbis'){
+      const M=lerp(T.B,T.C,0.5);
+      const dir={x:-(T.C.y-T.B.y), y:(T.C.x-T.B.x)};
+      const P_far={x:M.x+dir.x*10, y:M.y+dir.y*10};
+      drawLine(svg,M,P_far);
+    }
+    const names = shuffle(LINE_NAMES).map(x=>x.vi);
+    const box=$('#choices1'); box.innerHTML='';
+    names.forEach((name,i)=>{
+      const b=document.createElement('button'); b.className='choice'; b.innerHTML=`<span class="kbd">${i+1}</span> ${name}`; b.addEventListener('click',()=>pick(i)); box.appendChild(b);
+    });
+    $('#q1').textContent='Đây là đường gì trong tam giác?';
+    currentAnswerMap = names.map(n=>LINE_NAMES.find(x=>x.vi===n).key);
+  }
+
+  // --- Mode 2: identify triangle centers ---
+  const CENTER_NAMES=[
+    {key:'G', vi:'Trọng tâm (G)'},
+    {key:'O', vi:'Tâm ngoại tiếp (O)'},
+    {key:'I', vi:'Tâm nội tiếp (I)'},
+    {key:'H', vi:'Trực tâm (H)'}
+  ];
+  let correctCenter=null;
+
+  function circumcenter(T){
+    const Mab=lerp(T.A,T.B,0.5), Mac=lerp(T.A,T.C,0.5);
+    const nAB={x:-(T.B.y-T.A.y), y:(T.B.x-T.A.x)};
+    const nAC={x:-(T.C.y-T.A.y), y:(T.C.x-T.A.x)};
+    return lineIntersect(Mab,{x:Mab.x+nAB.x,y:Mab.y+nAB.y}, Mac,{x:Mac.x+nAC.x,y:Mac.y+nAC.y});
+  }
+  function incenter(T){
+    const u=unit(T.A,T.B), v=unit(T.A,T.C); const d1={x:u.x+v.x,y:u.y+v.y};
+    const w=unit(T.B,T.A), z=unit(T.B,T.C); const d2={x:w.x+z.x,y:w.y+z.y};
+    return lineIntersect(T.A,{x:T.A.x+d1.x,y:T.A.y+d1.y}, T.B,{x:T.B.x+d2.x,y:T.B.y+d2.y});
+  }
+  function orthocenter(T){
+    const Fa=footOfPerp(T.A,T.B,T.C); const Fb=footOfPerp(T.B,T.A,T.C);
+    return lineIntersect(T.A,Fa, T.B,Fb);
+  }
+  function centroid(T){ return {x:(T.A.x+T.B.x+T.C.x)/3, y:(T.A.y+T.B.y+T.C.y)/3} }
+
+  function drawCenter(svg, P){
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle'); c.setAttribute('cx',P.x); c.setAttribute('cy',P.y); c.setAttribute('r',6); c.setAttribute('fill','none'); c.setAttribute('stroke','#fde047'); c.setAttribute('stroke-width','2'); svg.appendChild(c);
+    const d=document.createElementNS('http://www.w3.org/2000/svg','circle'); d.setAttribute('cx',P.x); d.setAttribute('cy',P.y); d.setAttribute('r',2.5); d.setAttribute('fill','#fde047'); svg.appendChild(d);
+  }
+
+  function buildCenterQ(){
+    const svg=$('#svg2'); const T=randTri(); drawTri(svg,T);
+    const pick=shuffle(CENTER_NAMES)[0]; correctCenter=pick.key;
+    let P={x:0,y:0};
+    if(pick.key==='G') P=centroid(T);
+    else if(pick.key==='O') P=circumcenter(T);
+    else if(pick.key==='I') P=incenter(T);
+    else if(pick.key==='H') P=orthocenter(T);
+    if(!P || !isFinite(P.x) || !isFinite(P.y)) { return buildCenterQ(); }
+    drawCenter(svg,P);
+    const names=shuffle(CENTER_NAMES).map(x=>x.vi);
+    const box=$('#choices2'); box.innerHTML='';
+    names.forEach((name,i)=>{ const b=document.createElement('button'); b.className='choice'; b.innerHTML=`<span class="kbd">${i+1}</span> ${name}`; b.addEventListener('click',()=>pick(i)); box.appendChild(b); });
+    $('#q2').textContent='Dấu ⊙ thể hiện tâm nào của tam giác?';
+    currentAnswerMap = names.map(n=>CENTER_NAMES.find(x=>x.vi===n).key);
+  }
+
+  function pick(i){
+    if(timeLeft<=0) return;
+    const isLine=(mode==='idline');
+    const box = isLine? $('#choices1') : $('#choices2');
+    const nodes=$$('.choice',box);
+    nodes.forEach(n=>n.disabled=true);
+
+    const ansKey = currentAnswerMap[i];
+    const isCorrect = isLine ? (ansKey===correctKey) : (ansKey===correctCenter);
+
+    if(isCorrect){
+      nodes[i].classList.add('correct');
+      score+=10; streak++; timeLeft+=3;
+      toast('Chuẩn rồi! +10đ, +3s');
+    } else {
+      nodes[i].classList.add('wrong');
+      const correctIdx = currentAnswerMap.indexOf(isLine ? correctKey : correctCenter);
+      if(correctIdx >= 0) nodes[correctIdx].classList.add('correct');
+      streak=0; timeLeft=Math.max(0,timeLeft-4);
+      toast('Trượt rồi! -4s');
+    }
+    updateHUD();
+    setTimeout(nextQ, 600);
+  }
+
+  function nextQ(){
+    if(mode==='idline') buildLineQ();
+    else buildCenterQ();
+  }
+
+  init();
+  </script>
+</body>
+</html>
