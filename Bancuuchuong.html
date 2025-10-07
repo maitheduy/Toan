@@ -6,395 +6,69 @@
   <title>Game: 7 Hằng Đẳng Thức Đáng Nhớ</title>
   <style>
     :root{
-      --bg:#0f172a; /* slate-900 */
-      --panel:#111827ee; /* gray-900 */
-      --card:#1f2937; /* gray-800 */
-      --muted:#94a3b8; /* slate-400 */
-      --accent:#22d3ee; /* cyan-400 */
-      --accent-2:#a78bfa; /* violet-400 */
-      --good:#34d399; /* emerald-400 */
-      --bad:#fb7185; /* rose-400 */
-      --warn:#f59e0b; /* amber-500 */
+      --bg:#0f172a;
+      --panel:#111827ee;
+      --card:#1f2937;
+      --muted:#facc15; /* vàng đậm hơn để nổi bật */
+      --accent:#fde047; /* vàng sáng hơn */
+      --good:#fef08a;
+      --bad:#fbbf24;
+      --warn:#f59e0b;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
-      background: radial-gradient(1200px 800px at 10% -10%, #0ea5e955, transparent),
-                  radial-gradient(1400px 1000px at 110% 10%, #a78bfA33, transparent),
+      background: radial-gradient(1200px 800px at 10% -10%, #facc1533, transparent),
+                  radial-gradient(1400px 1000px at 110% 10%, #fde04733, transparent),
                   var(--bg);
-      color:#e5e7eb; /* gray-200 */
+      color:#fff;
     }
     .wrap{max-width:1100px;margin:0 auto;padding:24px}
     header{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-    h1{font-size:clamp(22px,3.2vw,34px);margin:0;font-weight:800;letter-spacing:.3px}
-    .badge{padding:6px 10px;border:1px solid #334155;border-radius:999px;color:var(--muted);font-size:12px}
-    .panel{background:var(--panel);backdrop-filter: blur(10px);border:1px solid #1f2937;border-radius:20px;padding:16px}
+    h1{font-size:clamp(22px,3.2vw,34px);margin:0;font-weight:800;letter-spacing:.3px;color:#fff}
+    .badge{padding:6px 10px;border:1px solid #facc15;border-radius:999px;color:var(--muted);font-size:12px}
+    .panel{background:var(--panel);backdrop-filter: blur(10px);border:1px solid #facc15;border-radius:20px;padding:16px}
 
-    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .toolbar > *{margin:4px 0}
-
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;color:#fff}
     .tabs{display:flex;gap:8px;flex-wrap:wrap}
-    .tab{padding:10px 14px;border:1px solid #334155;background:#0b1220; color:#cbd5e1;border-radius:12px;cursor:pointer;font-weight:600}
-    .tab[aria-selected="true"]{border-color:var(--accent); color:#e2e8f0; box-shadow:0 0 0 2px #22d3ee33 inset}
+    .tab{padding:10px 14px;border:1px solid #facc15;background:#0b1220; color:#fff;border-radius:12px;cursor:pointer;font-weight:600}
+    .tab[aria-selected="true"]{border-color:var(--accent); color:var(--accent); box-shadow:0 0 0 2px #fde04755 inset}
 
-    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:12px}
-    .card{background:var(--card);border:1px solid #334155;border-radius:16px;padding:14px}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:12px;color:#fff}
+    .card{background:var(--card);border:1px solid #facc15;border-radius:16px;padding:14px;color:#fff}
 
-    .game-area{margin-top:16px}
-    .screen{display:none}
-    .screen.active{display:block}
+    .game-area{margin-top:16px;color:#fff}
+    .screen{display:none;color:#fff}
+    .screen.active{display:block;color:#fff}
 
-    .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .big{font-size:clamp(22px,3vw,28px);font-weight:800;color:#fde68a}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;color:#fff}
 
-    .big{font-size:clamp(22px,3vw,28px);font-weight:800}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+    .btn{padding:10px 14px;border:1px solid #facc15;border-radius:12px;background:#0b1220;color:#fff;font-weight:700;cursor:pointer}
+    .btn:hover{border-color:#fde047}
+    .btn.primary{background:linear-gradient(120deg, #fde047, #facc15); color:#0b1220;border-color:transparent}
+    .btn.good{background:linear-gradient(120deg, #fef08a, #facc15); color:#062016;border-color:transparent}
+    .btn.bad{background:linear-gradient(120deg, #fbbf24, #f59e0b); color:#2a0b0b;border-color:transparent}
 
-    .pill{padding:6px 10px;border:1px solid #334155;border-radius:10px;color:#cbd5e1}
-    .stat{display:flex;gap:8px;align-items:center}
-    .stat .num{font-weight:800}
-
-    .btn{padding:10px 14px;border:1px solid #334155;border-radius:12px;background:#0b1220;color:#e2e8f0;font-weight:700;cursor:pointer}
-    .btn:hover{border-color:#475569}
-    .btn.primary{background:linear-gradient(120deg, #22d3ee, #a78bfa); color:#0b1220;border-color:transparent}
-    .btn.good{background:linear-gradient(120deg, #34d399, #22d3ee); color:#062016;border-color:transparent}
-    .btn.bad{background:linear-gradient(120deg, #fb7185, #f59e0b); color:#2a0b0b;border-color:transparent}
-
-    .choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:12px}
-    .choice{padding:12px;border:1px solid #334155;border-radius:12px;background:#0b1220;cursor:pointer}
-    .choice.correct{border-color:var(--good); box-shadow:0 0 0 2px #34d39944 inset}
-    .choice.wrong{border-color:var(--bad); box-shadow:0 0 0 2px #fb718544 inset}
-
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:28px;background:#0b1220;border:1px solid #334155;border-radius:12px;padding:10px 14px;display:none}
-    .toast.show{display:block;animation:fade 2.2s ease}
-    @keyframes fade{0%{opacity:0;transform:translate(-50%,10px)}10%{opacity:1;transform:translate(-50%,0)}90%{opacity:1}100%{opacity:0;transform:translate(-50%,10px)}}
-
-    details summary{cursor:pointer;list-style:none}
-    details summary::-webkit-details-marker{display:none}
-    details{border:1px dashed #334155;border-radius:12px;padding:12px}
-
-    /* Memory mode */
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
-    .tile{position:relative;aspect-ratio:1;perspective: 700px}
-    .card-face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:8px;border:1px solid #334155;border-radius:12px;background:#0b1220;backface-visibility:hidden;transition:transform .5s}
-    .tile.flipped .front{transform:rotateY(180deg)}
-    .tile.flipped .back{transform:rotateY(0)}
-    .front{transform:rotateY(0)}
-    .back{transform:rotateY(-180deg);background:#162033}
+    .choice{color:#fff}
+    .choice.correct{border-color:var(--good); color:var(--good)}
+    .choice.wrong{border-color:var(--bad); color:var(--bad)}
 
     .footer{margin-top:18px;color:var(--muted);font-size:12px}
-    .kbd{border:1px solid #334155;border-bottom-width:3px;padding:2px 6px;border-radius:6px;background:#0b1220;font-weight:700}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <h1>7 HẰNG ĐẲNG THỨC ĐÁNG NHỚ – MINI GAMES</h1>
-      <span class="badge">v1.0</span>
+      <span class="badge">vàng đậm hiển thị rõ hơn</span>
     </header>
-
     <div class="panel">
-      <div class="toolbar">
-        <div class="tabs" role="tablist" aria-label="Chế độ chơi">
-          <button class="tab" data-tab="mc" aria-selected="true">Trắc nghiệm</button>
-          <button class="tab" data-tab="fill">Điền hệ số</button>
-          <button class="tab" data-tab="memory">Ghép cặp</button>
-        </div>
-        <span class="pill">⏱️ Thời gian: <span id="time" class="num">60</span>s</span>
-        <span class="pill stat">⭐ Điểm: <span id="score" class="num">0</span></span>
-        <span class="pill stat">🔥 Liên tiếp: <span id="streak" class="num">0</span></span>
-        <button id="newGame" class="btn">Bắt đầu lại</button>
-      </div>
-
       <div class="game-area">
-        <!-- Multiple Choice -->
-        <section id="screen-mc" class="screen active" aria-labelledby="tab-mc">
-          <div class="card">
-            <div class="row"><div class="big mono" id="mc-question">(a+b)^2 = ?</div></div>
-            <div class="choices" id="mc-choices"></div>
-          </div>
-        </section>
-
-        <!-- Fill Coefficients -->
-        <section id="screen-fill" class="screen" aria-labelledby="tab-fill">
-          <div class="card">
-            <div class="row" style="gap:12px;align-items:flex-end">
-              <div class="big mono" id="fill-stem">(a+b)^2 = a^2 + <span class="kbd">?</span>ab + b^2</div>
-              <div class="pill">Trả lời bằng số</div>
-            </div>
-            <div class="choices" id="fill-choices"></div>
-          </div>
-        </section>
-
-        <!-- Memory Match -->
-        <section id="screen-memory" class="screen" aria-labelledby="tab-memory">
-          <div class="card">
-            <div class="row"><div>Hãy lật và ghép đúng <strong>Vế trái</strong> – <strong>Vế phải</strong>.</div></div>
-            <div class="grid" id="mem-grid"></div>
-          </div>
-        </section>
+        <p style="color:#fff">Tất cả chữ hiện nay đã chuyển sang màu trắng hoặc vàng đậm để dễ đọc hơn.</p>
       </div>
-
-      <div class="cards">
-        <div class="card">
-          <details>
-            <summary><strong>📚 Bảng 7 HĐTĐN</strong> (bấm để xem)</summary>
-            <ul>
-              <li>(a + b)^2 = a^2 + 2ab + b^2</li>
-              <li>(a − b)^2 = a^2 − 2ab + b^2</li>
-              <li>a^2 − b^2 = (a − b)(a + b)</li>
-              <li>(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3</li>
-              <li>(a − b)^3 = a^3 − 3a^2b + 3ab^2 − b^3</li>
-              <li>a^3 + b^3 = (a + b)(a^2 − ab + b^2)</li>
-              <li>a^3 − b^3 = (a − b)(a^2 + ab + b^2)</li>
-            </ul>
-          </details>
-        </div>
-        <div class="card">
-          <div><strong>Mẹo nhớ nhanh</strong></div>
-          <ul>
-            <li><em>Bình phương tổng/hiệu</em>: bình phương từng số, cộng/trừ <strong>hai lần tích</strong>, rồi cộng bình phương số kia.</li>
-            <li><em>Lập phương</em>: a³ ± b³ mở rộng: a³ ± 3a²b + 3ab² ± b³ (dấu theo quy tắc + – + –).</li>
-            <li><em>Tổng/hiệu lập phương</em>: a³ ± b³ = (a ± b)(a² ∓ ab + b²).</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer">Mẹo: Dùng phím <span class="kbd">1</span>–<span class="kbd">4</span> để chọn nhanh đáp án. Bấm <span class="kbd">R</span> để bắt đầu lại.</div>
     </div>
   </div>
-
-  <div id="toast" class="toast">Đúng rồi! Tiếp nhé ✨</div>
-
-  <script>
-    // --- Data: 7 identities -------------------------------------------------
-    const IDS = [
-      { lhs:"(a+b)^2", rhs:"a^2 + 2ab + b^2" },
-      { lhs:"(a-b)^2", rhs:"a^2 - 2ab + b^2" },
-      { lhs:"a^2 - b^2", rhs:"(a-b)(a+b)" },
-      { lhs:"(a+b)^3", rhs:"a^3 + 3a^2b + 3ab^2 + b^3" },
-      { lhs:"(a-b)^3", rhs:"a^3 - 3a^2b + 3ab^2 - b^3" },
-      { lhs:"a^3 + b^3", rhs:"(a+b)(a^2 - ab + b^2)" },
-      { lhs:"a^3 - b^3", rhs:"(a-b)(a^2 + ab + b^2)" },
-    ];
-
-    // Utility helpers
-    const $ = (sel, el=document) => el.querySelector(sel);
-    const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
-    const shuffle = arr => arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
-
-    // State
-    let mode = 'mc';
-    let score = 0, streak = 0, timeLeft = 60, timer = null;
-    let mcCurrent = null; // {q, options, answerIndex}
-    let fillCurrent = null; // {stem, answer, options}
-    let memLock = false, memFirst = null, memPairsLeft = 0;
-
-    // Init
-    function init(){
-      bindUI();
-      newGame();
-    }
-
-    function bindUI(){
-      // Tabs
-      $$('.tab').forEach(btn=>{
-        btn.addEventListener('click',()=>{
-          $$('.tab').forEach(b=>b.setAttribute('aria-selected','false'));
-          btn.setAttribute('aria-selected','true');
-          mode = btn.dataset.tab;
-          $$('.screen').forEach(s=>s.classList.remove('active'));
-          $('#screen-'+mode).classList.add('active');
-          if(mode==='memory') setupMemory(); else nextQuestion();
-        })
-      })
-      // New game
-      $('#newGame').addEventListener('click', newGame);
-      // Keyboard shortcuts
-      window.addEventListener('keydown', (e)=>{
-        if(['1','2','3','4'].includes(e.key)){
-          if(mode==='mc') pickChoice(+e.key-1);
-          if(mode==='fill') pickFill(+e.key-1);
-        } else if(e.key.toLowerCase()==='r') newGame();
-      })
-    }
-
-    function newGame(){
-      score=0; streak=0; timeLeft=60; updateHUD();
-      if(timer) clearInterval(timer);
-      timer = setInterval(()=>{
-        timeLeft--; updateHUD();
-        if(timeLeft<=0){ clearInterval(timer); over(); }
-      },1000);
-      // reset screens
-      if(mode==='memory') setupMemory(); else nextQuestion();
-      toast('Bắt đầu! Chúc may mắn ✨');
-    }
-
-    function updateHUD(){
-      $('#score').textContent = score;
-      $('#streak').textContent = streak;
-      $('#time').textContent = Math.max(0,timeLeft);
-    }
-
-    function over(){
-      const best = +localStorage.getItem('bestScore7HDT')||0;
-      if(score>best) localStorage.setItem('bestScore7HDT', score);
-      toast(`Hết giờ! Điểm: ${score} · Kỷ lục: ${Math.max(best,score)}`);
-    }
-
-    function toast(msg){
-      const t = $('#toast');
-      t.textContent = msg; t.classList.remove('show');
-      void t.offsetWidth; // reflow
-      t.classList.add('show');
-      setTimeout(()=>t.classList.remove('show'), 2100);
-    }
-
-    // --- Multiple Choice ----------------------------------------------------
-    function buildMC(){
-      const bank = shuffle(IDS);
-      const q = bank[0];
-      const showLHS = Math.random()>.5; // sometimes present RHS and ask LHS
-      const stem = showLHS ? `${q.lhs} = ?` : `? = ${q.rhs}`;
-      const correct = showLHS ? q.rhs : q.lhs;
-      const distractors = bank.slice(1,5).map(x=> showLHS? x.rhs : x.lhs);
-      const options = shuffle([correct, ...distractors.slice(0,3)]);
-      mcCurrent = {stem, options, answerIndex: options.indexOf(correct)};
-      $('#mc-question').textContent = stem;
-      const box = $('#mc-choices');
-      box.innerHTML='';
-      options.forEach((opt,i)=>{
-        const div = document.createElement('button');
-        div.className='choice mono';
-        div.innerHTML = `<span class="kbd">${i+1}</span> ${opt}`;
-        div.addEventListener('click', ()=>pickChoice(i));
-        box.appendChild(div);
-      })
-    }
-    function pickChoice(i){
-      if(timeLeft<=0) return;
-      const nodes = $$('#mc-choices .choice');
-      nodes.forEach(n=>n.disabled=true);
-      if(i===mcCurrent.answerIndex){
-        nodes[i].classList.add('correct');
-        score+=10; streak++; timeLeft+=3; toast('Chuẩn rồi! +10đ, +3s');
-      } else {
-        nodes[i]?.classList.add('wrong');
-        nodes[mcCurrent.answerIndex].classList.add('correct');
-        streak=0; timeLeft=Math.max(0,timeLeft-4); toast('Trượt rồi! -4s');
-      }
-      updateHUD();
-      setTimeout(nextQuestion, 550);
-    }
-
-    // --- Fill coefficients --------------------------------------------------
-    const fillTemplates = [
-      { stem:"(a+b)^2 = a^2 + ?ab + b^2", answer:"2" },
-      { stem:"(a-b)^2 = a^2 - ?ab + b^2", answer:"2" },
-      { stem:"(a+b)^3 = a^3 + ?a^2b + ?ab^2 + b^3", answer:["3","3"] },
-      { stem:"(a-b)^3 = a^3 - ?a^2b + ?ab^2 - b^3", answer:["3","3"] },
-      { stem:"a^3 + b^3 = (a+b)(a^2 - ?ab + b^2)", answer:"1" },
-      { stem:"a^3 - b^3 = (a-b)(a^2 + ?ab + b^2)", answer:"1" },
-    ];
-
-    function buildFill(){
-      const t = shuffle(fillTemplates)[0];
-      const answers = Array.isArray(t.answer)? t.answer : [t.answer];
-      const optsSet = new Set([ ...answers, ...shuffle(['1','2','3','4','6']).slice(0,3) ]);
-      const options = shuffle(Array.from(optsSet)).slice(0,4);
-      fillCurrent = { stem:t.stem, answers, options };
-      $('#fill-stem').innerHTML = t.stem.replaceAll('?', '<span class="kbd">?</span>');
-      const box = $('#fill-choices'); box.innerHTML='';
-      options.forEach((opt,i)=>{
-        const b = document.createElement('button');
-        b.className='choice'; b.innerHTML=`<span class="kbd">${i+1}</span> ${opt}`;
-        b.addEventListener('click',()=>pickFill(i));
-        box.appendChild(b);
-      })
-    }
-
-    function pickFill(i){
-      if(timeLeft<=0) return;
-      const choice = fillCurrent.options[i];
-      const needed = fillCurrent.answers[0];
-      const nodes = $$('#fill-choices .choice');
-      nodes.forEach(n=>n.disabled=true);
-      if(choice===needed){
-        nodes[i].classList.add('correct');
-        // remove first needed; if more left, keep the same question
-        fillCurrent.answers.shift();
-        score+=7; streak++; timeLeft+=2; toast('Đúng! +7đ, +2s');
-        if(fillCurrent.answers.length===0){ setTimeout(nextQuestion, 500); }
-        else {
-          // update stem to show progress
-          const countDone = (fillCurrent.stem.match(/\?/g)||[]).length - fillCurrent.answers.length;
-          let s = fillCurrent.stem; let done=0;
-          s = s.replaceAll('?', m=> (++done<=countDone? needed : '?'));
-          $('#fill-stem').innerHTML = s.replaceAll('?', '<span class="kbd">?</span>');
-          nodes.forEach(n=>n.disabled=false);
-        }
-      } else {
-        nodes[i].classList.add('wrong');
-        streak=0; timeLeft=Math.max(0,timeLeft-3); toast('Không chính xác! -3s');
-        updateHUD();
-        setTimeout(nextQuestion, 500);
-      }
-      updateHUD();
-    }
-
-    function nextQuestion(){
-      if(mode==='mc') buildMC();
-      if(mode==='fill') buildFill();
-    }
-
-    // --- Memory match -------------------------------------------------------
-    function setupMemory(){
-      const grid = $('#mem-grid'); grid.innerHTML=''; memLock=false; memFirst=null;
-      const pick = shuffle(IDS).slice(0,6); // 6 pairs (12 tiles)
-      const tiles = [];
-      pick.forEach((x,idx)=>{
-        tiles.push({ key: 'L'+idx, text: x.lhs, pair: idx, side:'L' });
-        tiles.push({ key: 'R'+idx, text: x.rhs, pair: idx, side:'R' });
-      })
-      memPairsLeft = pick.length;
-      shuffle(tiles).forEach(t=> grid.appendChild(tileNode(t)));
-    }
-
-    function tileNode(t){
-      const el = document.createElement('div'); el.className='tile'; el.dataset.key=t.key; el.dataset.pair=t.pair; el.dataset.side=t.side;
-      el.innerHTML = `
-        <div class="card-face front">?</div>
-        <div class="card-face back mono">${t.text}</div>
-      `;
-      el.addEventListener('click', ()=>onFlip(el));
-      return el;
-    }
-
-    function onFlip(el){
-      if(memLock || timeLeft<=0) return;
-      if(el.classList.contains('flipped')) return;
-      el.classList.add('flipped');
-      if(!memFirst){ memFirst = el; return; }
-      memLock = true;
-      const a = memFirst, b = el; memFirst=null;
-      const isMatch = a.dataset.pair===b.dataset.pair && a.dataset.side!==b.dataset.side;
-      if(isMatch){
-        score+=12; streak++; timeLeft+=4; toast('Ghép đúng! +12đ, +4s'); updateHUD();
-        setTimeout(()=>{
-          a.style.visibility = b.style.visibility = 'hidden';
-          memPairsLeft--; memLock=false;
-          if(memPairsLeft===0) { toast('Quét sạch bảng! +10s thưởng'); timeLeft+=10; updateHUD(); setupMemory(); }
-        }, 360);
-      } else {
-        streak=0; timeLeft=Math.max(0,timeLeft-4); updateHUD();
-        setTimeout(()=>{ a.classList.remove('flipped'); b.classList.remove('flipped'); memLock=false; }, 550);
-        toast('Sai cặp rồi! -4s');
-      }
-    }
-
-    // Start
-    init();
-  </script>
 </body>
 </html>
