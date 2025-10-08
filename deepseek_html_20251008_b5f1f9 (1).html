@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Học Công Thức Đạo Hàm</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .game-board {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .formula-list {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .formula-list h2, .game-board h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .formula-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .formula-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .formula-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+        
+        .formula-equation {
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .question-container {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .question {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+            min-height: 80px;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .option:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .option.correct {
+            background: rgba(76, 175, 80, 0.5);
+            border-color: #4CAF50;
+        }
+        
+        .option.incorrect {
+            background: rgba(244, 67, 54, 0.5);
+            border-color: #F44336;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            padding: 12px 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        #next-btn {
+            background: rgba(33, 150, 243, 0.7);
+        }
+        
+        #hint-btn {
+            background: rgba(255, 193, 7, 0.7);
+        }
+        
+        .hint-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: #4CAF50;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Game Học Công Thức Đạo Hàm</h1>
+            <p class="subtitle">Chọn đáp án đúng cho mỗi công thức đạo hàm</p>
+        </header>
+        
+        <div class="game-container">
+            <div class="game-board">
+                <h2>Trò Chơi</h2>
+                
+                <div class="game-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Điểm</div>
+                        <div class="stat-value" id="score">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Câu hỏi</div>
+                        <div class="stat-value" id="question-count">1/10</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Đúng</div>
+                        <div class="stat-value" id="correct-count">0</div>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar"></div>
+                </div>
+                
+                <div class="question-container">
+                    <div class="question" id="question">
+                        <!-- Câu hỏi sẽ được hiển thị ở đây -->
+                    </div>
+                    
+                    <div class="options" id="options">
+                        <!-- Các lựa chọn sẽ được hiển thị ở đây -->
+                    </div>
+                </div>
+                
+                <div class="hint-container" id="hint-container">
+                    <strong>Gợi ý:</strong> <span id="hint-text"></span>
+                </div>
+                
+                <div class="controls">
+                    <button id="hint-btn">Gợi ý</button>
+                    <button id="next-btn">Câu tiếp theo</button>
+                </div>
+            </div>
+            
+            <div class="formula-list">
+                <h2>Công Thức Đạo Hàm</h2>
+                <div id="formulas-list">
+                    <!-- Danh sách công thức sẽ được hiển thị ở đây -->
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Game được thiết kế để giúp ghi nhớ các công thức đạo hàm - Sử dụng MathJax để hiển thị công thức toán học</p>
+        </footer>
+    </div>
+
+    <script>
+        // Danh sách công thức đạo hàm
+        const formulas = [
+            {
+                name: "Tổng các hàm",
+                equation: "$$(u + v + w)' = u' + v' + w'$$",
+                hint: "Đạo hàm của tổng bằng tổng các đạo hàm"
+            },
+            {
+                name: "Hằng số nhân hàm",
+                equation: "$$(a \\cdot u)' = a \\cdot u'$$",
+                hint: "Hằng số được giữ nguyên khi lấy đạo hàm"
+            },
+            {
+                name: "Tích hai hàm",
+                equation: "$$(u \\cdot v)' = u'v + uv'$$",
+                hint: "Đạo hàm của tích: đạo hàm cái trước nhân cái sau, cộng cái trước nhân đạo hàm cái sau"
+            },
+            {
+                name: "Thương hai hàm",
+                equation: "$$\\left( \\frac{u}{v} \\right)' = \\frac{u'v - uv'}{v^2}$$",
+                hint: "Tử: đạo hàm tử nhân mẫu trừ tử nhân đạo hàm mẫu; Mẫu: bình phương mẫu"
+            },
+            {
+                name: "Hàm phân thức bậc nhất",
+                equation: "$$\\left( \\frac{ax + b}{cx + d} \\right)' = \\frac{ad - bc}{(cx + d)^2}$$",
+                hint: "Tử: định thức của ma trận hệ số; Mẫu: bình phương mẫu số"
+            },
+            {
+                name: "Lũy thừa",
+                equation: "$$(x^n)' = n \\cdot x^{n-1}$$",
+                hint: "Hạ số mũ xuống làm hệ số, giảm số mũ đi 1"
+            },
+            {
+                name: "Nghịch đảo",
+                equation: "$$\\left( \\frac{1}{x} \\right)' = -\\frac{1}{x^2}$$",
+                hint: "Đạo hàm của 1/x là -1/x²"
+            },
+            {
+                name: "Căn bậc hai",
+                equation: "$$(\\sqrt{x})' = \\frac{1}{2\\sqrt{x}}$$",
+                hint: "Đạo hàm của căn x là 1 chia cho 2 căn x"
+            },
+            {
+                name: "Hàm hợp lũy thừa",
+                equation: "$$(u^n)' = n \\cdot u^{n-1} \\cdot u'$$",
+                hint: "Áp dụng quy tắc chuỗi: đạo hàm ngoài nhân đạo hàm trong"
+            },
+            {
+                name: "Hàm mũ",
+                equation: "$$(a^u)' = u' \\cdot a^u \\cdot \\ln(a)$$",
+                hint: "Đạo hàm hàm mũ: đạo hàm số mũ nhân hàm mũ nhân ln(cơ số)"
+            }
+        ];
+
+        // Biến trạng thái game
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctCount = 0;
+        let totalQuestions = 10;
+        let usedFormulas = [];
+        
+        // DOM Elements
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const scoreElement = document.getElementById('score');
+        const questionCountElement = document.getElementById('question-count');
+        const correctCountElement = document.getElementById('correct-count');
+        const nextButton = document.getElementById('next-btn');
+        const hintButton = document.getElementById('hint-btn');
+        const hintContainer = document.getElementById('hint-container');
+        const hintTextElement = document.getElementById('hint-text');
+        const progressBar = document.getElementById('progress-bar');
+        const formulasListElement = document.getElementById('formulas-list');
+        
+        // Khởi tạo game
+        function initGame() {
+            displayFormulasList();
+            generateQuestion();
+            updateStats();
+            
+            // Sự kiện nút
+            nextButton.addEventListener('click', nextQuestion);
+            hintButton.addEventListener('click', showHint);
+        }
+        
+        // Hiển thị danh sách công thức
+        function displayFormulasList() {
+            formulasListElement.innerHTML = '';
+            
+            formulas.forEach((formula, index) => {
+                const formulaItem = document.createElement('div');
+                formulaItem.className = 'formula-item';
+                formulaItem.innerHTML = `
+                    <div class="formula-name">${formula.name}</div>
+                    <div class="formula-equation">${formula.equation}</div>
+                `;
+                formulasListElement.appendChild(formulaItem);
+            });
+            
+            // Cập nhật MathJax
+            MathJax.typeset();
+        }
+        
+        // Tạo câu hỏi ngẫu nhiên
+        function generateQuestion() {
+            // Lấy công thức chưa được sử dụng
+            let availableFormulas = formulas.filter((_, index) => !usedFormulas.includes(index));
+            
+            // Nếu đã dùng hết, reset lại
+            if (availableFormulas.length === 0) {
+                usedFormulas = [];
+                availableFormulas = [...formulas];
+            }
+            
+            // Chọn ngẫu nhiên một công thức
+            const randomIndex = Math.floor(Math.random() * availableFormulas.length);
+            const formulaIndex = formulas.indexOf(availableFormulas[randomIndex]);
+            usedFormulas.push(formulaIndex);
+            
+            const correctFormula = formulas[formulaIndex];
+            
+            // Tạo các lựa chọn sai
+            const wrongOptions = [];
+            const allIndices = [...Array(formulas.length).keys()];
+            const wrongIndices = allIndices.filter(i => i !== formulaIndex);
+            
+            // Trộn mảng và lấy 3 phần tử đầu tiên
+            const shuffledWrongIndices = wrongIndices.sort(() => 0.5 - Math.random()).slice(0, 3);
+            
+            shuffledWrongIndices.forEach(index => {
+                wrongOptions.push(formulas[index]);
+            });
+            
+            // Tạo mảng lựa chọn và trộn
+            const options = [correctFormula, ...wrongOptions];
+            const shuffledOptions = options.sort(() => 0.5 - Math.random());
+            
+            // Hiển thị câu hỏi
+            questionElement.innerHTML = `Công thức đạo hàm nào sau đây là đúng cho: <strong>${correctFormula.name}</strong>?`;
+            
+            // Hiển thị các lựa chọn
+            optionsElement.innerHTML = '';
+            shuffledOptions.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.innerHTML = option.equation;
+                optionElement.dataset.index = formulas.indexOf(option);
+                optionElement.addEventListener('click', checkAnswer);
+                optionsElement.appendChild(optionElement);
+            });
+            
+            // Lưu chỉ số công thức đúng
+            questionElement.dataset.correctIndex = formulaIndex;
+            hintTextElement.textContent = correctFormula.hint;
+            
+            // Ẩn gợi ý
+            hintContainer.style.display = 'none';
+            
+            // Cập nhật MathJax
+            MathJax.typeset();
+        }
+        
+        // Kiểm tra đáp án
+        function checkAnswer(event) {
+            const selectedOption = event.currentTarget;
+            const selectedIndex = parseInt(selectedOption.dataset.index);
+            const correctIndex = parseInt(questionElement.dataset.correctIndex);
+            
+            // Vô hiệu hóa tất cả các lựa chọn
+            const allOptions = document.querySelectorAll('.option');
+            allOptions.forEach(option => {
+                option.removeEventListener('click', checkAnswer);
+            });
+            
+            // Đánh dấu đúng/sai
+            if (selectedIndex === correctIndex) {
+                selectedOption.classList.add('correct');
+                score += 10;
+                correctCount++;
+            } else {
+                selectedOption.classList.add('incorrect');
+                // Đánh dấu đáp án đúng
+                allOptions.forEach(option => {
+                    if (parseInt(option.dataset.index) === correctIndex) {
+                        option.classList.add('correct');
+                    }
+                });
+            }
+            
+            // Cập nhật thống kê
+            updateStats();
+        }
+        
+        // Hiển thị gợi ý
+        function showHint() {
+            hintContainer.style.display = 'block';
+        }
+        
+        // Chuyển câu hỏi tiếp theo
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < totalQuestions) {
+                generateQuestion();
+                updateStats();
+            } else {
+                endGame();
+            }
+        }
+        
+        // Cập nhật thống kê
+        function updateStats() {
+            scoreElement.textContent = score;
+            questionCountElement.textContent = `${currentQuestionIndex + 1}/${totalQuestions}`;
+            correctCountElement.textContent = correctCount;
+            
+            // Cập nhật thanh tiến trình
+            const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+        
+        // Kết thúc game
+        function endGame() {
+            questionElement.innerHTML = `Chúc mừng! Bạn đã hoàn thành trò chơi!<br>Điểm số: ${score}/${totalQuestions * 10}`;
+            optionsElement.innerHTML = '';
+            hintContainer.style.display = 'none';
+            nextButton.textContent = 'Chơi lại';
+            nextButton.removeEventListener('click', nextQuestion);
+            nextButton.addEventListener('click', restartGame);
+        }
+        
+        // Chơi lại
+        function restartGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            correctCount = 0;
+            usedFormulas = [];
+            nextButton.textContent = 'Câu tiếp theo';
+            nextButton.removeEventListener('click', restartGame);
+            nextButton.addEventListener('click', nextQuestion);
+            generateQuestion();
+            updateStats();
+        }
+        
+        // Khởi động game khi trang được tải
+        window.onload = initGame;
+    </script>
+</body>
+</html>
