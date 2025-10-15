@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 6 - Tỉ số thể tích hình chóp</title>
+    
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .problem-number {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.3rem;
+            font-weight: 300;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .back-button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 1024px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .problem-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .visualization-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .problem-question {
+            margin-bottom: 25px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            border-left: 6px solid #3498db;
+            font-size: 1.1rem;
+        }
+        
+        .math-formula {
+            font-family: 'Cambria Math', 'Latin Modern Math', serif;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .option {
+            padding: 20px;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .option:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+        }
+        
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .correct-answer {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 6px solid #28a745;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .canvas-container {
+            width: 100%;
+            height: 500px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #f8f9fa;
+            border: 3px solid #e9ecef;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        
+        .controls-info {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .solution-toggle {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 20px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .solution-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .solution {
+            display: none;
+            margin-top: 20px;
+            padding: 30px;
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border-radius: 15px;
+            border-left: 6px solid #e74c3c;
+        }
+        
+        .solution.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .solution-step {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .vector-notation {
+            font-style: italic;
+            color: #e74c3c;
+            font-weight: 500;
+        }
+        
+        .properties {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .property-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            text-align: center;
+        }
+        
+        .property-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #3498db;
+            margin-top: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 25px;
+            color: white;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="problem-number">6</div>
+            <h1>Tỉ số thể tích hình chóp</h1>
+            <p class="subtitle">Hình chóp $S.ABCD$ với các trung điểm $A', B', C', D'$</p>
+            <a href="index.html" class="back-button">
+                ← Quay lại trang chủ
+            </a>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="problem-section">
+                <div class="problem-question">
+                    <p><strong>Bài toán:</strong> Cho hình chóp $S.ABCD$. Gọi $A', B', C', D'$ lần lượt là trung điểm của $SA, SB, SC, SD$. Khi đó tỉ số thể tích của hai khối chóp $S.A'B'C'D'$ và $S.ABCD$ bằng:</p>
+                </div>
+                
+                <div class="options-grid">
+                    <div class="option">(A) $\frac{1}{2}$</div>
+                    <div class="option">(B) $\frac{1}{3}$</div>
+                    <div class="option correct">(C) $\frac{1}{8}$</div>
+                    <div class="option">(D) $\frac{1}{16}$</div>
+                </div>
+                
+                <div class="correct-answer">
+                    ✅ Đáp án đúng: (C) $\frac{1}{8}$
+                </div>
+                
+                <div class="properties">
+                    <div class="property-card">
+                        <div>Tỉ số mỗi cạnh</div>
+                        <div class="property-value">$1 : 2$</div>
+                    </div>
+                    <div class="property-card">
+                        <div>Số cạnh thay đổi</div>
+                        <div class="property-value">3</div>
+                    </div>
+                    <div class="property-card">
+                        <div>Tỉ số thể tích</div>
+                        <div class="property-value">$1 : 8$</div>
+                    </div>
+                </div>
+                
+                <button class="solution-toggle" onclick="toggleSolution()">
+                    📝 Hiện/Ẩn Lời Giải Chi Tiết
+                </button>
+                
+                <div id="solution" class="solution">
+                    <div class="solution-step">
+                        <span class="step-number">1</span>
+                        <strong>Xác định tỉ số các cạnh:</strong>
+                        <div class="math-formula">
+                            Vì $A', B', C', D'$ là trung điểm nên:<br>
+                            $\dfrac{SA'}{SA} = \dfrac{SB'}{SB} = \dfrac{SC'}{SC} = \dfrac{SD'}{SD} = \dfrac{1}{2}$
+                        </div>
+                    </div>
+                    
+                    <div class="solution-step">
+                        <span class="step-number">2</span>
+                        <strong>Áp dụng công thức tỉ số thể tích:</strong>
+                        <div class="math-formula">
+                            Thể tích hình chóp tỉ lệ với tích của **ba** tỉ số độc lập (2 cho đáy, 1 cho chiều cao).<br>
+                            $\dfrac{V_{S.A'B'C'D'}}{V_{S.ABCD}} = \left(\dfrac{1}{2}\right)^3 = \dfrac{1}{8}$
+                        </div>
+                    </div>
+                    
+                    <div class="solution-step">
+                        <span class="step-number">3</span>
+                        <strong>Kết luận:</strong>
+                        <div class="math-formula">
+                            Tỉ số thể tích cần tìm là $\dfrac{1}{8}$
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="visualization-section">
+                <h3 style="margin-bottom: 20px; text-align: center; color: #2c3e50;">Mô hình 3D tương tác</h3>
+                <div id="canvas-container-6" class="canvas-container"></div>
+                <div class="controls-info">
+                    <p>🎮 <strong>Điều khiển:</strong> 🖱️ Kéo để xoay | 🔍 Cuộn để phóng to/thu nhỏ | 🖱️ Giữ chuột phải để di chuyển</p>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                    <h4 style="color: #2c3e50; margin-bottom: 15px;">Chú thích màu sắc:</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 20px; height: 20px; background: #2c3e50; border-radius: 4px;"></div>
+                            <span>Hình chóp $S.ABCD$ (gốc)</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 20px; height: 20px; background: #3498db; border-radius: 4px;"></div>
+                            <span>Hình chóp $S.A'B'C'D'$</span>
+                        </div>
+                    </div>
+
+                    <!-- Thanh trượt kích thước nhãn -->
+                    <div style="margin-top: 15px;">
+                        <label for="label-scale" style="display: block; margin-bottom: 8px; color: #2c3e50; font-weight: 500;">
+                            📏 Kích thước nhãn: <span id="scale-value">1.00</span>
+                        </label>
+                        <input type="range" id="label-scale" min="1" max="10" step="0.5" value="1"
+                               style="width: 100%; height: 8px; cursor: pointer;">
+                    </div>
+
+                    <!-- Thanh trượt độ dày đường kẻ -->
+                    <div style="margin-top: 15px;">
+                        <label for="line-thickness" style="display: block; margin-bottom: 8px; color: #2c3e50; font-weight: 500;">
+                            📏 Độ dày đường kẻ (px): <span id="thickness-value">1.00</span>
+                        </label>
+                        <input type="range" id="line-thickness" min="0.5" max="5" step="0.1" value="1"
+                               style="width: 100%; height: 8px; cursor: pointer;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Minh họa hình học không gian với Three.js | Bài 6 - Tỉ số thể tích hình chóp</p>
+        </footer>
+    </div>
+
+    <!-- Import Three.js và các addon cần thiết -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { Line2 } from 'three/addons/lines/Line2.js';
+        import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+        import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+
+        let labelSprites = [];
+        let allLineMaterials = [];
+
+        function createTextSprite(text, position, size = 1.0, color = '#000000') {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = 512;
+            canvas.height = 256;
+            context.font = 'Bold 80px Arial';
+            context.fillStyle = color;
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(text, canvas.width / 2, canvas.height / 2);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.minFilter = THREE.LinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            const spriteMaterial = new THREE.SpriteMaterial({ 
+                map: texture,
+                transparent: true
+            });
+            const sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(size, size / 2, 1);
+            sprite.position.copy(position);
+            return sprite;
+        }
+
+        function createThickLine(start, end, color = 0x000000, baseWidth = 2) {
+            const lineGeometry = new LineGeometry();
+            lineGeometry.setPositions([
+                start.x, start.y, start.z,
+                end.x, end.y, end.z
+            ]);
+
+            const material = new LineMaterial({
+                color: color,
+                linewidth: baseWidth,
+                resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
+                dashed: false
+            });
+
+            const line = new Line2(lineGeometry, material);
+            line.scale.set(1, 1, 1);
+
+            allLineMaterials.push({ material, baseWidth });
+            return line;
+        }
+
+        function updateLabelScale(scaleValue) {
+            const scaleY = scaleValue / 2;
+            labelSprites.forEach(sprite => {
+                sprite.scale.set(scaleValue, scaleY, 1);
+            });
+            document.getElementById('scale-value').textContent = scaleValue.toFixed(2);
+        }
+
+        function updateLineWidth(factor) {
+            allLineMaterials.forEach(item => {
+                item.material.linewidth = item.baseWidth * factor;
+            });
+            document.getElementById('thickness-value').textContent = factor.toFixed(2);
+        }
+
+        function init() {
+            const container = document.getElementById('canvas-container-6');
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf8f9fa);
+
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(4, 5, 6);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight1.position.set(5, 10, 7.5);
+            scene.add(directionalLight1);
+            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+            directionalLight2.position.set(-5, -5, -5);
+            scene.add(directionalLight2);
+
+            const gridHelper = new THREE.GridHelper(15, 15, 0x000000, 0x000000);
+            gridHelper.material.opacity = 0.1;
+            gridHelper.material.transparent = true;
+            scene.add(gridHelper);
+
+            // Định nghĩa các đỉnh
+            const S = new THREE.Vector3(0, 5, 0);
+            const A = new THREE.Vector3(-3, 0, 3);
+            const B = new THREE.Vector3(3, 0, 3);
+            const C = new THREE.Vector3(3, 0, -3);
+            const D = new THREE.Vector3(-3, 0, -3);
+
+            const A_prime = S.clone().lerp(A, 0.5);
+            const B_prime = S.clone().lerp(B, 0.5);
+            const C_prime = S.clone().lerp(C, 0.5);
+            const D_prime = S.clone().lerp(D, 0.5);
+
+            labelSprites = [];
+            allLineMaterials = [];
+
+            // Tạo nhãn
+            const labels = [
+                { text: 'S', pos: S.clone().add(new THREE.Vector3(0, 0.8, 0)), size: 1.0, color: '#e74c3c' },
+                { text: 'A', pos: A.clone().add(new THREE.Vector3(-0.8, 0, 0)), size: 1.0, color: '#2c3e50' },
+                { text: 'B', pos: B.clone().add(new THREE.Vector3(0.8, 0, 0)), size: 1.0, color: '#2c3e50' },
+                { text: 'C', pos: C.clone().add(new THREE.Vector3(0.8, 0, 0)), size: 1.0, color: '#2c3e50' },
+                { text: 'D', pos: D.clone().add(new THREE.Vector3(-0.8, 0, 0)), size: 1.0, color: '#2c3e50' },
+                { text: "A'", pos: A_prime.clone().add(new THREE.Vector3(-0.6, 0.5, 0)), size: 1.0, color: '#3498db' },
+                { text: "B'", pos: B_prime.clone().add(new THREE.Vector3(0.6, 0.5, 0)), size: 1.0, color: '#3498db' },
+                { text: "C'", pos: C_prime.clone().add(new THREE.Vector3(0.6, 0.5, 0)), size: 1.0, color: '#3498db' },
+                { text: "D'", pos: D_prime.clone().add(new THREE.Vector3(-0.6, 0.5, 0)), size: 1.0, color: '#3498db' }
+            ];
+
+            labels.forEach(lbl => {
+                const sprite = createTextSprite(lbl.text, lbl.pos, lbl.size, lbl.color);
+                scene.add(sprite);
+                labelSprites.push(sprite);
+            });
+
+            // Vẽ hình chóp gốc (baseWidth = 2)
+            const baseEdges = [A, B, C, D, A];
+            for (let i = 0; i < baseEdges.length - 1; i++) {
+                scene.add(createThickLine(baseEdges[i], baseEdges[i+1], 0x2c3e50, 2));
+            }
+            [A, B, C, D].forEach(P => scene.add(createThickLine(S, P, 0x2c3e50, 2)));
+
+            // Vẽ hình chóp phẩy (baseWidth = 3)
+            const colorPrime = 0x3498db;
+            const primeEdges = [A_prime, B_prime, C_prime, D_prime, A_prime];
+            for (let i = 0; i < primeEdges.length - 1; i++) {
+                scene.add(createThickLine(primeEdges[i], primeEdges[i+1], colorPrime, 3));
+            }
+            [A_prime, B_prime, C_prime, D_prime].forEach(P => scene.add(createThickLine(S, P, colorPrime, 3)));
+
+            // Gắn sự kiện thanh trượt
+            document.getElementById('label-scale').addEventListener('input', (e) => {
+                updateLabelScale(parseFloat(e.target.value));
+            });
+            document.getElementById('line-thickness').addEventListener('input', (e) => {
+                updateLineWidth(parseFloat(e.target.value));
+            });
+
+            // Khởi tạo giá trị mặc định
+            updateLabelScale(1);
+            updateLineWidth(1);
+
+            // Xử lý resize
+            function onWindowResize() {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                const res = new THREE.Vector2(container.clientWidth, container.clientHeight);
+                allLineMaterials.forEach(item => {
+                    item.material.resolution.copy(res);
+                });
+            }
+            window.addEventListener('resize', onWindowResize);
+
+            // Vòng lặp render
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        init();
+    </script>
+
+    <script>
+        function toggleSolution() {
+            document.getElementById('solution').classList.toggle('show');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.MathJax) MathJax.typesetPromise();
+        });
+    </script>
+</body>
+</html>
