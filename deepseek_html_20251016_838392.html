@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Minh Họa Động: "Xu Hướng" và Tích Phân Đường - Thầy Duymt2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 20px;
+            background: linear-gradient(135deg, #ece9e6 0%, #ffffff 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+        
+        #main-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 25px;
+            max-width: 1000px;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        #canvas-container {
+            border: 3px solid #2c3e50; 
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            background: #ffffff;
+            flex: 1;
+            min-width: 500px;
+            max-width: 700px;
+        }
+        
+        #controls {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            width: 280px;
+            border: 1px solid #e9ecef;
+        }
+        
+        h1 { 
+            color: #2c3e50; 
+            text-align: center; 
+            font-size: 24px;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            color: #e74c3c;
+            font-weight: bold;
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .teacher-name {
+            color: #3498db;
+            font-style: italic;
+            text-align: center;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+        
+        h2 { 
+            color: #2980b9; 
+            text-align: center; 
+            border-bottom: 2px solid #bdc3c7;
+            padding-bottom: 8px;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        
+        p { 
+            color: #2c3e50; 
+            font-size: 13px; 
+            line-height: 1.4; 
+            margin-bottom: 10px;
+        }
+        
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        #startStopBtn { 
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+        }
+        
+        #startStopBtn.running { 
+            background: linear-gradient(45deg, #c0392b, #e74c3c);
+        }
+        
+        #startStopBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .legend-item { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 8px; 
+            font-size: 12px;
+            padding: 4px;
+            border-radius: 5px;
+            background: #ffffff;
+            border: 1px solid #e9ecef;
+        }
+        
+        .legend-line { 
+            width: 25px; 
+            height: 2px; 
+            margin-right: 8px; 
+        }
+        
+        .legend-arrow { 
+            margin-right: 8px; 
+            font-size: 14px;
+        }
+        
+        .stats {
+            background: #ffffff;
+            padding: 8px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 12px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #ecf0f1;
+            border-radius: 3px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .work-display {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            margin: 8px 0;
+            color: #2980b9;
+        }
+        
+        .control-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .control-buttons button {
+            margin-bottom: 0;
+            font-size: 12px;
+            padding: 8px;
+        }
+        
+        #resetBtn {
+            background: linear-gradient(45deg, #95a5a6, #bdc3c7);
+        }
+        
+        #speedUpBtn {
+            background: linear-gradient(45deg, #f39c12, #f1c40f);
+        }
+        
+        #speedDownBtn {
+            background: linear-gradient(45deg, #7f8c8d, #95a5a6);
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #bdc3c7;
+            margin: 10px 0;
+        }
+        
+        @media (max-width: 900px) {
+            #main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            #canvas-container {
+                min-width: 400px;
+                max-width: 500px;
+            }
+            
+            #controls {
+                width: 100%;
+                max-width: 500px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .subtitle {
+                font-size: 13px;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            #canvas-container {
+                min-width: 300px;
+                max-width: 400px;
+            }
+            
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>BẢN GIAO HƯỞNG VI MÔ</h1>
+        <div class="subtitle">Tương Tác Động Giữa "Xu Hướng" và "Môi Trường"</div>
+        <div class="teacher-name">Giảng viên hướng dẫn: Thầy Duymt2</div>
+    </div>
+
+    <div id="main-container">
+        <div id="canvas-container">
+            <canvas id="mainCanvas" width="600" height="400"></canvas>
+        </div>
+        <div id="controls">
+            <h2>BẢNG ĐIỀU KHIỂN</h2>
+            <button id="startStopBtn">🎬 Bắt đầu Diễn Biến</button>
+            
+            <div class="control-buttons">
+                <button id="resetBtn">🔄 Reset</button>
+                <button id="speedUpBtn">⚡ Tăng tốc</button>
+                <button id="speedDownBtn">🐢 Giảm tốc</button>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <div class="work-display" id="workDisplay">Tổng công: 0.00</div>
+            
+            <div class="stats">
+                <div>Vị trí P: (<span id="positionX">0</span>, <span id="positionY">0</span>)</div>
+                <div>Vector F: (<span id="vectorP">0</span>, <span id="vectorQ">0</span>)</div>
+                <div>Tích phân: <span id="currentWork">0.00</span></div>
+            </div>
+            
+            <p>Quan sát điểm P di chuyển dọc theo đường cong C và sự tương tác động với trường vector F.</p>
+            
+            <hr>
+            
+            <h2>CHÚ THÍCH</h2>
+            <div class="legend-item"><div class="legend-line" style="background-color: #2c3e50;"></div><span>Đường cong C</span></div>
+            <div class="legend-item"><span class="legend-arrow" style="color: #3498db;">➤</span><span>Trường Vector F</span></div>
+            <div class="legend-item"><span class="legend-arrow" style="color: #e74c3c;">➤</span><span>Xu hướng dr</span></div>
+            <div class="legend-item"><div class="legend-line" style="border-top: 2px dashed #e74c3c;"></div><span>Thành phần dx</span></div>
+            <div class="legend-item"><div class="legend-line" style="border-top: 2px dashed #e74c3c; transform: rotate(90deg); margin-left: -8px; margin-right:12px"></div><span>Thành phần dy</span></div>
+            
+            <hr>
+            
+            <p><b>CÔNG VI MÔ: dW = F ⋅ dr</b></p>
+            <div class="legend-item" style="color: #27ae60;">■ dW > 0 (Thuận lợi)</div>
+            <div class="legend-item" style="color: #e74c3c;">■ dW < 0 (Bất lợi)</div>
+            <div class="legend-item" style="color: #95a5a6;">■ dW ≈ 0 (Trung tính)</div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        let isRunning = false;
+        let t = 0;
+        let speed = 1;
+        let totalWork = 0;
+        let animationId = null;
+
+        // --- HÀM TOÁN HỌC ---
+
+        const pathCenterX = width / 2;
+        const pathCenterY = height / 2;
+        const pathRadiusX = 150;
+        const pathRadiusY = 100;
+        
+        function pathX(t) { return pathCenterX + pathRadiusX * Math.sin(2 * t); }
+        function pathY(t) { return pathCenterY + pathRadiusY * Math.cos(3 * t); }
+
+        function vectorField(x, y) {
+            const scale = 120;
+            const dx = -(y - pathCenterY) / scale;
+            const dy = (x - pathCenterX) / scale;
+            return { p: dx * 30, q: dy * 30 };
+        }
+
+        // --- CÁC HÀM VẼ ĐỘNG ---
+        
+        function drawArrow(x, y, vecX, vecY, color, lineWidth = 2) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = lineWidth;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + vecX, y + vecY);
+            ctx.stroke();
+            
+            const headlen = 8;
+            const angle = Math.atan2(vecY, vecX);
+            ctx.beginPath();
+            ctx.moveTo(x + vecX, y + vecY);
+            ctx.lineTo(x + vecX - headlen * Math.cos(angle - Math.PI / 6), y + vecY - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(x + vecX - headlen * Math.cos(angle + Math.PI / 6), y + vecY - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        function drawAnimatedVectorField() {
+            const gridSize = 35;
+            const timeOffset = Date.now() * 0.001;
+            
+            for (let x = 20; x < width - 20; x += gridSize) {
+                for (let y = 20; y < height - 20; y += gridSize) {
+                    const pulse = Math.sin(timeOffset + x * 0.01 + y * 0.01) * 0.3 + 0.7;
+                    const F = vectorField(x, y);
+                    drawArrow(x, y, F.p * pulse, F.q * pulse, `rgba(52, 152, 219, ${0.6 + pulse * 0.3})`, 1.2);
+                }
+            }
+        }
+
+        function drawAnimatedCurveC() {
+            const timeOffset = Date.now() * 0.002;
+            
+            // Vẽ đường cong chính
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let i = 0; i <= 2 * Math.PI; i += 0.01) {
+                ctx.lineTo(pathX(i), pathY(i));
+            }
+            ctx.closePath();
+            ctx.stroke();
+
+            // Hiệu ứng di chuyển
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            const animPos = (timeOffset * 0.5) % (2 * Math.PI);
+            for (let i = animPos; i < animPos + 0.8; i += 0.02) {
+                ctx.lineTo(pathX(i), pathY(i));
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function drawInteractiveElements() {
+            const currentX = pathX(t);
+            const currentY = pathY(t);
+            const nextX = pathX(t + 0.01);
+            const nextY = pathY(t + 0.01);
+
+            const dx = nextX - currentX;
+            const dy = nextY - currentY;
+            const dr_viz = { x: dx * 60, y: dy * 60 };
+
+            const F = vectorField(currentX, currentY);
+            const dW = F.p * dx + F.q * dy;
+            totalWork += dW;
+
+            // Cập nhật giao diện
+            document.getElementById('positionX').textContent = Math.round(currentX);
+            document.getElementById('positionY').textContent = Math.round(currentY);
+            document.getElementById('vectorP').textContent = F.p.toFixed(1);
+            document.getElementById('vectorQ').textContent = F.q.toFixed(1);
+            document.getElementById('currentWork').textContent = dW.toFixed(3);
+            document.getElementById('workDisplay').textContent = `Tổng công: ${totalWork.toFixed(2)}`;
+            document.getElementById('progressFill').style.width = `${(t / (2 * Math.PI)) * 100}%`;
+
+            // Vẽ các thành phần
+            const pulse = Math.sin(Date.now() * 0.01) * 0.2 + 0.8;
+
+            // Thành phần dx, dy
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(currentX, currentY);
+            ctx.lineTo(currentX + dr_viz.x, currentY);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(currentX + dr_viz.x, currentY);
+            ctx.lineTo(currentX + dr_viz.x, currentY + dr_viz.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Vector dr
+            drawArrow(currentX, currentY, dr_viz.x, dr_viz.y, `rgba(231, 76, 60, ${0.8 + pulse * 0.2})`, 3);
+
+            // Vector F
+            drawArrow(currentX, currentY, F.p, F.q, '#3498db', 3);
+            
+            // Điểm P
+            let pointColor = '#95a5a6';
+            if (Math.abs(dW) > 0.001) {
+                pointColor = dW > 0 ? '#27ae60' : '#e74c3c';
+            }
+            
+            ctx.fillStyle = pointColor;
+            ctx.beginPath();
+            ctx.arc(currentX, currentY, 8, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Vòng tròn nhấp nháy
+            ctx.strokeStyle = pointColor;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(currentX, currentY, 12 + Math.sin(Date.now() * 0.01) * 4, 0, 2 * Math.PI);
+            ctx.stroke();
+        }
+
+        function drawTrail() {
+            ctx.strokeStyle = 'rgba(52, 152, 219, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            const trailLength = 40;
+            for (let i = 0; i < trailLength; i++) {
+                const trailT = t - i * 0.02;
+                if (trailT >= 0) {
+                    ctx.lineTo(pathX(trailT), pathY(trailT));
+                }
+            }
+            ctx.stroke();
+        }
+
+        // --- VÒNG LẶP CHÍNH ---
+        function animate() {
+            if (!isRunning) return;
+
+            ctx.clearRect(0, 0, width, height);
+
+            drawAnimatedVectorField();
+            drawTrail();
+            drawAnimatedCurveC();
+            drawInteractiveElements();
+            
+            t += 0.008 * speed;
+            if (t > 2 * Math.PI) {
+                t = 0;
+                totalWork = 0;
+            }
+
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // --- ĐIỀU KHIỂN ---
+        const startStopBtn = document.getElementById('startStopBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const speedUpBtn = document.getElementById('speedUpBtn');
+        const speedDownBtn = document.getElementById('speedDownBtn');
+
+        startStopBtn.addEventListener('click', () => {
+            isRunning = !isRunning;
+            startStopBtn.classList.toggle('running', isRunning);
+            startStopBtn.textContent = isRunning ? '⏸ Dừng' : '🎬 Bắt đầu';
+            if (isRunning) {
+                animate();
+            } else {
+                cancelAnimationFrame(animationId);
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            t = 0;
+            totalWork = 0;
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('workDisplay').textContent = 'Tổng công: 0.00';
+            if (!isRunning) {
+                ctx.clearRect(0, 0, width, height);
+                drawAnimatedVectorField();
+                drawAnimatedCurveC();
+            }
+        });
+
+        speedUpBtn.addEventListener('click', () => {
+            speed = Math.min(speed * 1.5, 4);
+            speedUpBtn.textContent = `⚡ ${speed.toFixed(1)}x`;
+        });
+
+        speedDownBtn.addEventListener('click', () => {
+            speed = Math.max(speed / 1.5, 0.3);
+            speedDownBtn.textContent = `🐢 ${speed.toFixed(1)}x`;
+        });
+
+        // Khởi tạo lần đầu
+        drawAnimatedVectorField();
+        drawAnimatedCurveC();
+
+    </script>
+
+</body>
+</html>
