@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vẽ Tứ Diện Đều Với Nhãn Đỉnh</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #1a2b34; }
+        canvas { display: block; }
+        /* CSS cho các nhãn tên đỉnh */
+        .label {
+            position: absolute;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            pointer-events: none; /* Giúp chuột có thể click "xuyên qua" nhãn */
+            
+            /* --- SỬA LỖI QUAN TRỌNG --- */
+            /* Đặt z-index để đảm bảo nhãn luôn nằm trên canvas */
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas sẽ được chèn vào đây bởi Three.js -->
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // 1. KHỞI TẠO CÁC THÀNH PHẦN CƠ BẢN
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a2b34);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 5;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        // 2. TÍNH TOÁN TỌA ĐỘ
+        const s = new THREE.Vector3(1.5, 1.5, 1.5);
+        const a = new THREE.Vector3(1.5, -1.5, -1.5);
+        const b = new THREE.Vector3(-1.5, 1.5, -1.5);
+        const c = new THREE.Vector3(-1.5, -1.5, 1.5);
+        const o = new THREE.Vector3(0, 0, 0);
+
+        const vertices = [s, a, b, c];
+
+        // 3. VẼ CÁC ĐỐI TƯỢNG
+        const tetrahedronGroup = new THREE.Group();
+        scene.add(tetrahedronGroup);
+
+        // Vẽ các đỉnh (hình cầu nhỏ)
+        const sphereGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+        const vertexMaterial = new THREE.MeshBasicMaterial({ color: 0x00aaff });
+        
+        vertices.forEach(vertexPos => {
+            const vertexSphere = new THREE.Mesh(sphereGeometry, vertexMaterial);
+            vertexSphere.position.copy(vertexPos);
+            tetrahedronGroup.add(vertexSphere);
+        });
+
+        // Vẽ tâm O (màu đỏ)
+        const centerMaterial = new THREE.MeshBasicMaterial({ color: 0xff4444 });
+        const centerSphere = new THREE.Mesh(sphereGeometry, centerMaterial);
+        centerSphere.position.copy(o);
+        tetrahedronGroup.add(centerSphere);
+
+        // Vẽ các cạnh tứ diện (màu trắng)
+        const edgesGeometry = new THREE.BufferGeometry().setFromPoints([
+            s, a,  s, b,  s, c,
+            a, b,  b, c,  c, a
+        ]);
+        const edgesMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+        const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+        tetrahedronGroup.add(edges);
+
+        // Vẽ các đường nối từ tâm O (màu vàng, nét đứt)
+        const radiiGeometry = new THREE.BufferGeometry().setFromPoints([
+            o, s,  o, a,  o, b,  o, c
+        ]);
+        const radiiMaterial = new THREE.LineDashedMaterial({
+            color: 0xffff00,
+            linewidth: 1,
+            scale: 1,
+            dashSize: 0.2,
+            gapSize: 0.1,
+        });
+        const radii = new THREE.LineSegments(radiiGeometry, radiiMaterial);
+        radii.computeLineDistances();
+        tetrahedronGroup.add(radii);
+
+        // TẠO NHÃN CHO CÁC ĐỈNH
+        function createLabel(text, position) {
+            const div = document.createElement('div');
+            div.className = 'label';
+            div.textContent = text;
+            document.body.appendChild(div);
+            return { div: div, position: position };
+        }
+
+        const labels = [
+            createLabel('S', s),
+            createLabel('A', a),
+            createLabel('B', b),
+            createLabel('C', c),
+            createLabel('O', o),
+        ];
+
+        // 4. ÁNH SÁNG
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(5, 10, 7.5);
+        scene.add(directionalLight);
+
+        // 5. VÒNG LẶP ANIMATION
+        function animate() {
+            requestAnimationFrame(animate);
+
+            controls.update();
+
+            // CẬP NHẬT VỊ TRÍ CÁC NHÃN
+            labels.forEach(labelData => {
+                const tempV = labelData.position.clone();
+                tempV.project(camera);
+                
+                const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
+                const y = (-tempV.y * 0.5 + 0.5) * window.innerHeight;
+                
+                // Cập nhật vị trí của thẻ div, dịch ra một chút để không bị che
+                labelData.div.style.left = `${x}px`;
+                labelData.div.style.top = `${y}px`;
+                labelData.div.style.transform = `translate(15px, -15px)`;
+            });
+            
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }, false);
+
+        animate();
+    </script>
+</body>
+</html>
